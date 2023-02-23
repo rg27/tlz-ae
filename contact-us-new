@@ -3,13 +3,11 @@
 <div id="crmWebToEntityForm" style="">
 	<meta HTTP-EQUIV ="content-type" CONTENT="text/html;charset=UTF-8">
 		<form action="https://forms.zohopublic.com/tradelicensezone/form/TLZaeContactUs1/formperma/rwUSXvpb7qzII7W1KauTI7Mr6siBkyh8If-rDhnrEOU/htmlRecords/submit" name="form" method="POST" onSubmit="javascript: return checkMandatory3769920000001324020()" accept-charset="UTF-8">
-			<input type="text" style="display:none;" name="xnQsjsdp" value="d3699a04053bfabe7333369d7e5be4b216f2557c434ccecec21d84adbe8bc100"/> 
+            <input type="text" style="display:none;" name="xnQsjsdp" value="d3699a04053bfabe7333369d7e5be4b216f2557c434ccecec21d84adbe8bc100"/> 
 			<input type="hidden" name="zc_gad" id="zc_gad" value=""/> 
 			<input type="text" style="display:none;" name="xmIwtLD" value="873d1b11fa85dc0747f04f7e13179f97944afd966f3c43049c9d71c1e37371c5"/> 
 			<input type="text"  style="display:none;" name="actionType" value="TGVhZHM="/>
-			<input type="text" style="display:none;" name="returnURL" value="https://tradelicensezone.com/gads-thank-you-page/" /> 
 			<br/>
-			<!-- Do not remove this code. -->
 			<style>
 		#crmWebToEntityForm tr , #crmWebToEntityForm td { 
 			padding:6px;
@@ -18,19 +16,18 @@
 			}
 			</style>
 			<table style="">
-				
 				<tr>
 					<td  style="word-break: break-word;text-align:left;font-size:16px;">Full Name<span style="color:red;">*</span>
 					</td>
 					<td style="" >
-						<input type="text" style="width:100%;box-sizing:border-box;"  maxlength="80" name="Last Name" />
+						<input type="text" style="width:100%;box-sizing:border-box;"  maxlength="80" name="SingleLine" />
 					</td>
 					<td style=""></td>
 				</tr>
 				<tr>
 					<td  style="word-break: break-word;text-align:left;font-size:16px;">Email<span style="color:red;">*</span>
 					</td>
-					<td style="" >
+					<td style="">
 						<input type="text" style="width:100%;box-sizing:border-box;"  maxlength="100" name="Email" />
 					</td>
 					<td style=""></td>
@@ -38,7 +35,7 @@
 				<tr>
 					<td  style="word-break: break-word;text-align:left;font-size:16px;">Contact Number  <span title="Please make sure to add the Country Code." style="cursor: pointer; width: 16px; height: 16px; display: inline-block; background: #fff; border: 1px solid #ccc; color: #ccc; text-align: center; font-size: 11px; line-height: 16px; font-weight: bold; border-radius: 50%; vertical-align: middle;">?</span></td>
 					<td style="" >
-						<input type="text" style="width:100%;box-sizing:border-box;"  maxlength="30" name="Mobile" />
+						<input type="text" style="width:100%;box-sizing:border-box;"  maxlength="30" name="PhoneNumber_countrycode" />
 					</td>
 				</tr>
 					<tr style="display:none;" >
@@ -136,7 +133,7 @@
 
  	  function checkMandatory3769920000001324020() {
 		for(i=0;i<mndFileds.length;i++) {
-		  var fieldObj=document.forms["WebToLeads3769920000001324020"][mndFileds[i]];
+		  var fieldObj=document.forms["form"][mndFileds[i]];
 		  if(fieldObj) {
 			if (((fieldObj.value).replace(/^\s+|\s+$/g, "")).length==0) {
 			 if(fieldObj.type =="file")
@@ -170,12 +167,10 @@
 		}
 		document.getElementById("formsubmit").disabled=true;
 	}
-						</script>
-						<input type="hidden" name="eo" value="14f4ec16431e0686150daa43f3210513"/>
-						<input type="hidden" name="te" value="true"/>
-						<img id="tr_img_873d1b11fa85dc0747f04f7e13179f97944afd966f3c43049c9d71c1e37371c5" src="https://crm.zohopublic.com/crm/WebFormAnalyticsServlet?rid=873d1b11fa85dc0747f04f7e13179f97944afd966f3c43049c9d71c1e37371c5gidd3699a04053bfabe7333369d7e5be4b216f2557c434ccecec21d84adbe8bc100gida378f81585080d3b6fb1acbec6638b71gid885e3c1045bd9bdcc91bdf30f82b5696gid14f4ec16431e0686150daa43f3210513" style="display: none;" alt=""/>
-						<script> if(typeof wfTRKey=="undefined"){wfTRKey = {};}wfTRKey["url_873d1b11fa85dc0747f04f7e13179f97944afd966f3c43049c9d71c1e37371c5"]="https://crm.zohopublic.com/crm/WebFormAnalyticsServlet?rid=873d1b11fa85dc0747f04f7e13179f97944afd966f3c43049c9d71c1e37371c5gidd3699a04053bfabe7333369d7e5be4b216f2557c434ccecec21d84adbe8bc100gid364f49863aa1c6f080988c8e111a90b8gid885e3c1045bd9bdcc91bdf30f82b5696gid14f4ec16431e0686150daa43f3210513";wfTRKey["rs_873d1b11fa85dc0747f04f7e13179f97944afd966f3c43049c9d71c1e37371c5"]=false; function sf(ev){var te = ev.target ? ev.target : ev.srcElement; var nd = te.nodeName ? te.nodeName.toLowerCase() : ""; var fm; if (te.form) { fm = te.form.elements.xmIwtLD.value; } if (fm && !wfTRKey["rs_" + fm] && ((nd == "input" && te.type != "file") || (nd == "input" && te.type == "file" && ev.type == "click") || nd == "select" || nd == "textarea" || nd == "div")) { document.getElementById("tr_img_"+fm).setAttribute("src", wfTRKey["url_"+fm]);  wfTRKey["rs_"+fm] = true }} if(document.addEventListener){document.addEventListener("click", sf);document.addEventListener("change", sf);}else{document.attachEvent("onclick", sf);document.attachEvent("onchange", sf);}</script>
-
-					
-</form>
+    </script>
+    <input type="hidden" name="eo" value="14f4ec16431e0686150daa43f3210513"/>
+    <input type="hidden" name="te" value="true"/>
+    <img id="tr_img_873d1b11fa85dc0747f04f7e13179f97944afd966f3c43049c9d71c1e37371c5" src="https://crm.zohopublic.com/crm/WebFormAnalyticsServlet?rid=873d1b11fa85dc0747f04f7e13179f97944afd966f3c43049c9d71c1e37371c5gidd3699a04053bfabe7333369d7e5be4b216f2557c434ccecec21d84adbe8bc100gida378f81585080d3b6fb1acbec6638b71gid885e3c1045bd9bdcc91bdf30f82b5696gid14f4ec16431e0686150daa43f3210513" style="display: none;" alt=""/>
+    <script> if(typeof wfTRKey=="undefined"){wfTRKey = {};}wfTRKey["url_873d1b11fa85dc0747f04f7e13179f97944afd966f3c43049c9d71c1e37371c5"]="https://crm.zohopublic.com/crm/WebFormAnalyticsServlet?rid=873d1b11fa85dc0747f04f7e13179f97944afd966f3c43049c9d71c1e37371c5gidd3699a04053bfabe7333369d7e5be4b216f2557c434ccecec21d84adbe8bc100gid364f49863aa1c6f080988c8e111a90b8gid885e3c1045bd9bdcc91bdf30f82b5696gid14f4ec16431e0686150daa43f3210513";wfTRKey["rs_873d1b11fa85dc0747f04f7e13179f97944afd966f3c43049c9d71c1e37371c5"]=false; function sf(ev){var te = ev.target ? ev.target : ev.srcElement; var nd = te.nodeName ? te.nodeName.toLowerCase() : ""; var fm; if (te.form) { fm = te.form.elements.xmIwtLD.value; } if (fm && !wfTRKey["rs_" + fm] && ((nd == "input" && te.type != "file") || (nd == "input" && te.type == "file" && ev.type == "click") || nd == "select" || nd == "textarea" || nd == "div")) { document.getElementById("tr_img_"+fm).setAttribute("src", wfTRKey["url_"+fm]);  wfTRKey["rs_"+fm] = true }} if(document.addEventListener){document.addEventListener("click", sf);document.addEventListener("change", sf);}else{document.attachEvent("onclick", sf);document.attachEvent("onchange", sf);}</script>		
+    </form>
 </div>
