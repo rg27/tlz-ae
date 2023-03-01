@@ -1,0 +1,50 @@
+
+
+var accountId = ZDK.Page.getField('Account_Name').getValue().id;
+log("Account id : " + accountId);
+
+var accountDetails = ZDK.Apps.CRM.Accounts.fetchById(accountId);
+log("account Details: " + accountDetails);
+var pc_id = accountDetails.Customer_ID ;
+log("PC ID: " + pc_id);
+var get_access_token = ZDK.HTTP.request({
+ url: 'https://accounts.zoho.com/oauth/v2/token',
+ method: 'POST',
+ content: {
+   refresh_token: '1000.c1b64175627c79d1b1f38049f6d19eeb.e5ac7279fbabfb8dacf7db55f7ad7249',
+   client_id: '1000.HLTT3CUSEPMVW9J66LUOTO977Y69XZ',
+   client_secret: 'f59b88f178e0704f86dcea0b6090c902c750048666',
+   grant_type: 'refresh_token'
+ },
+ headers: {
+   'Content-Type': 'application/x-www-form-urlencoded'
+ }
+});
+
+var access_token_details = get_access_token.getResponse();
+log(access_token_details);
+
+var obj1 = JSON.parse(access_token_details);
+var token1 = obj1.access_token;
+log(token1);
+
+
+const res = ZDK.HTTP.request({
+  url: "https://www.zohoapis.com/books/v3/contacts/" +pc_id+"?organization_id=682374092",
+  method: 'GET',
+  headers:{
+    Authorization: 'Zoho-oauthtoken ' + token1
+  }
+});
+contact_details = res.getResponse();
+log(contact_details);
+
+var obj2 = JSON.parse(contact_details);
+var contact_name = obj2.contact.contact_name;
+var receive_amount = obj2.contact.outstanding_receivable_amount;
+var unusedcred = obj2.contact.unused_credits_receivable_amount;
+
+ZDK.Page.getField("Outstanding_Receivables").setValue(receive_amount);
+ZDK.Page.getField("Unused_Credits").setValue(unusedcred);
+
+
