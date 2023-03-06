@@ -1,0 +1,38 @@
+pro_details = zoho.crm.getRecordById("Pro",pro_id);
+name = pro_details.get("Name");
+cn = pro_details.get("Contact_Number");
+sp = pro_details.get("Service_Portfolio");
+email = pro_details.get("Email");
+url1 = "https://accounts.zoho.com/oauth/v2/token";
+header_data1 = Map();
+header_data1.put("Content-Type","application/x-www-form-urlencoded");
+
+payloadMap2 = Map();
+payloadMap2.put("refresh_token","1000.2dc868f7874d1ccab7c72b46595c5e1b.b0abee9717b5f3d3e810ca75f200f34d");
+payloadMap2.put("redirect_url","http://example.com/yourcallback");
+payloadMap2.put("client_id","1000.SK5AJNY34JKAT2HJYARVV4UW8CGP0X");
+payloadMap2.put("client_secret","1f02cc3ab9e7647fd858d749c762aabff1599fc3bb");
+payloadMap2.put("grant_type","refresh_token");
+response2 = invokeurl
+[
+	url :url1
+	type :POST
+	parameters:payloadMap2
+	headers:header_data1
+];
+info response2;
+url2 = "https://www.zohoapis.com/crm/v3/Leads";
+c_type = "Zoho-oauthtoken " + response2.get("access_token");
+info c_type;
+header_data2 = Map();
+header_data2.put("Content-Type","application/x-www-form-urlencoded");
+header_data2.put("Authorization",c_type);
+payload = {"data":{{"Layout":{"id":"4311131000000091055"},"Email":email,"Last_Name":name,"Mobile":cn,"Service_Portfolio":sp,"Lead_Source":"TLZ"}}};
+response3 = invokeurl
+[
+	url :url2
+	type :POST
+	parameters:payload.toString()
+	headers:header_data2
+];
+info response3;
