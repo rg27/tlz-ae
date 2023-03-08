@@ -1,12 +1,16 @@
 
 
+//Use Account Name Field Event Type
 var accountId = ZDK.Page.getField('Account_Name').getValue().id;
 log("Account id : " + accountId);
 
+//Fetch Account to get the Customer ID value
 var accountDetails = ZDK.Apps.CRM.Accounts.fetchById(accountId);
 log("account Details: " + accountDetails);
 var pc_id = accountDetails.Customer_ID ;
 log("PC ID: " + pc_id);
+
+//Trigger HTTP Request to get the token details
 var get_access_token = ZDK.HTTP.request({
  url: 'https://accounts.zoho.com/oauth/v2/token',
  method: 'POST',
@@ -28,7 +32,7 @@ var obj1 = JSON.parse(access_token_details);
 var token1 = obj1.access_token;
 log(token1);
 
-
+//Trigger HTTP request to get the Contact Details in Zoho Books
 const res = ZDK.HTTP.request({
   url: "https://www.zohoapis.com/books/v3/contacts/" +pc_id+"?organization_id=682374092",
   method: 'GET',
@@ -39,12 +43,16 @@ const res = ZDK.HTTP.request({
 contact_details = res.getResponse();
 log(contact_details);
 
+//Parse the Contact Details to JSON
 var obj2 = JSON.parse(contact_details);
-var contact_name = obj2.contact.contact_name;
 var receive_amount = obj2.contact.outstanding_receivable_amount;
 var unusedcred = obj2.contact.unused_credits_receivable_amount;
 
-ZDK.Page.getField("Outstanding_Receivables").setValue(receive_amount);
-ZDK.Page.getField("Unused_Credits").setValue(unusedcred);
-
+//Update or set the Outstanding Receivables or Unused Credits fields in Quotes module
+// ZDK.Page.getField("Outstanding_Receivables").setValue(receive_amount);
+// ZDK.Page.getField("Unused_Credits").setValue(unusedcred);
+if (receive_amount > 0 )
+{
+    ZDK.Client.showAlert('Outstanding Receivables: AED ' + receive_amount );
+}
 
