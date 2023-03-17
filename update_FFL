@@ -1,0 +1,40 @@
+updated_id_lists = account_id.toList("|||");
+for each  accountIdstr in updated_id_lists
+{
+	accountmap = zoho.crm.getRecordById("Accounts",accountIdstr.tolong());
+	subform = ifnull(accountmap.getJson("Contacts_Roles"),"");
+	subformlist = List();
+	for each  sub in subform
+	{
+		if(sub.get("With_Visa") != false)
+		{
+			contact_id = sub.get("Contact_Name").get("id");
+			contact_details = zoho.crm.getRecordById("Contacts",contact_id);
+			rvid = ifnull(contact_details.get("Residence_visa_ID"),"1111111");
+			if(rvid != null || rvid != "")
+			{
+				rv_details = zoho.crm.getRecordById("Residence_Visa",rvid.toLong());
+				rv_ffl = rv_details.get("Free_For_Life");
+				//Mapping
+				mp1 = Map();
+				mp1.put("id",sub.get("id"));
+				mp1.put("VISA_FFL",rv_ffl);
+				subformlist.add(mp1);
+			}
+			else
+			{
+				//nothing
+			}
+		}
+		else
+		{
+			mp2 = Map();
+			mp2.put("id",sub.get("id"));
+			subformlist.add(mp2);
+		}
+	}
+	paranmap = Map();
+	paranmap.put("Contacts_Roles",subformlist);
+	res = zoho.crm.updateRecord("Accounts",accountIdstr.toLong(),paranmap);
+}
+return "Successfully Updated!";
