@@ -1,0 +1,30 @@
+//Trigger a template
+account_details = zoho.crm.getRecordById("Accounts",accountId);
+template_data = {"id":3769920000123674020};
+email_payload = {"data":{{"from":{"email":"renewals@tlz.ae"},"to":{{"email":account_details.get("PC_Email")}},"bcc":{{"email":"junlie@tlz.ae"},{"email":"renewals@tlz.ae"}},"org_email":true,"mail_format":"html","template":template_data}}};
+url1 = "https://www.zohoapis.com/crm/v3/Accounts/" + accountId + "/actions/send_mail";
+response = invokeurl
+[
+	url :url1
+	type :POST
+	parameters:email_payload.toString()
+	connection:"send_mail"
+];
+info response;
+//-------------------------------------------------------------------------------------------------------
+//Trigger a bounced email
+bounce_data = response.getJson("data");
+if(bounce_data.getJson("code").containsIgnoreCase("NOT_ALLOWED") || bounce_data.getJson("code").containsIgnoreCase("INVALID_DATA"))
+{
+	template_data1 = {"id":3769920000112673162};
+	email_payload1 = {"data":{{"from":{"email":"renewals@tlz.ae"},"to":{{"email":"junlie@tlz.ae"},{"email":"rey@tlz.ae"}},"org_email":true,"mail_format":"html","template":template_data1}}};
+	url2 = "https://www.zohoapis.com/crm/v3/Accounts/" + accountId + "/actions/send_mail";
+	response1 = invokeurl
+	[
+		url :url2
+		type :POST
+		parameters:email_payload1.toString()
+		connection:"send_mail"
+	];
+	info response1;
+}
