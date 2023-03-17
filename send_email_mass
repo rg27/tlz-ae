@@ -1,0 +1,85 @@
+accountIdsList = accountId.toList("|||");
+for each  accountIdstr in accountIdsList
+{
+	//get the info contact roles
+	accountmap = zoho.crm.getRecordById("Accounts",accountIdstr.tolong());
+	accountname = accountmap.get("Account_Name");
+	parent = ifnull(accountmap.get("Parent_Account"),"");
+	fromadd = "info@tlz.ae";
+	//from email list
+	data = Map();
+	//data.put("subject","Subject");
+	data.put("mail_format","html");
+	a = Map();
+	a.put("email",fromadd);
+	a.put("user_name","TLZ");
+	data.put("from",a);
+	//to email list
+	b_list = list();
+	//This section refers to adding the shareholders in the account as part of the recipients
+	//subform = ifnull(accountmap.get("Contacts_Roles"),"");
+	//for each  form in subform
+	//{
+	//	if(parent = "")
+	//	{
+	//		email2 = form.get("Email_Address");
+	//		fname = form.get("Contact_Name").get("name");
+	//		shareh = form.get("Shareholder");
+	//		pc = form.get("PC");
+	//		mobile = form.get("Contact_Number");
+	//		if(shareh = true)
+	//		{
+	//			if(pc = false)
+	//			{
+	//				b = Map();
+	//				b.put("user_name",fname);
+	//				b.put("email",email2);
+	//				b_list.add(b);
+	//			}
+	//		}
+	//	}
+	//  }
+	//This is the end of this section.
+	pcname = accountmap.get("Primary_Contact_Name");
+	pcemail = accountmap.get("PC_Email");
+	c = Map();
+	c.put("user_name",pcname);
+	c.put("email",pcemail);
+	b_list.add(c);
+	data.put("to",b_list);
+	emp = Map();
+	emp.put("id","3769920000128353024");
+	data.put("template",emp);
+	data.put("org_email",true);
+	f = list();
+	f.add(data);
+	final = Map();
+	final.put("data",f);
+	info final;
+	send = invokeurl
+	[
+		url :"https://www.zohoapis.com/crm/v2.1/Accounts/" + accountIdstr + "/actions/send_mail"
+		type :POST
+		parameters:final.tostring()
+		connection:"send_email_all_modules"
+	];
+	if(send.toString().contains("Your mail has been sent successfully"))
+	{
+		info send;
+	}
+	else
+	{
+		email5 = "junlie@tlz.ae";
+		accounturl = concat("https://crm.zoho.com/crm/org682300086/tab/Accounts/",accountIdstr);
+		sendmail
+		[
+			from :zoho.adminuserid
+			to :email5
+			cc:"rey@tlz.ae"
+			subject :"MASS EMAIL - CUSTOM FUNCTION (not successfully sent)"
+			message :"<div>Dear Junlie,<br></div><div><br></div><div>Please note that the mass email was not successful for CN:" + accountname + ". Email: " + pcemail + ".<br></div><div><br></div><div>Thank you.<br></div><div><br></div>LINK: " + accounturl + ""
+		]
+		info send;
+	}
+}
+return "Function executed";
