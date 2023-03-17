@@ -1,0 +1,33 @@
+// status_urlList = response.get("sign_status_url").toList("/");
+// req_id = status_urlList.get(status_urlList.size() - 1);
+// info req_id;
+req_id_details = zoho.crm.getRecordById("Applications1",app_id);
+req_id = req_id_details.get("Request_ID");
+//Change the ownership
+requestMap = invokeurl
+[
+	url :"https://sign.zoho.com/api/v1/requests/" + req_id
+	type :GET
+	connection:"sign_change_ownership"
+];
+if(requestMap.containKey("requests"))
+{
+	requestStr = requestMap.get("requests");
+	info "requestStr" + requestStr;
+	requestObj = requestStr.toMap();
+	info "requestObj" + requestObj;
+	req_id = requestObj.get("request_id");
+	new_email = new_email_owner;
+	//use new owner
+	data = Map();
+	data.put("email_id",new_email);
+	// Change Ownership api call
+	resp1 = invokeurl
+	[
+		url :"https://sign.zoho.com/api/v1/requests/" + req_id + "/changeownership"
+		type :PUT
+		parameters:data
+		connection:"sign_change_ownership"
+	];
+}
+info resp1;
