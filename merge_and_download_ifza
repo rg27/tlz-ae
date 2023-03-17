@@ -1,0 +1,186 @@
+app_Details = zoho.crm.getRecordById("Applications1",application_id);
+// info app_Details;
+application_number = app_Details.getJson("Name");
+emp_name = app_Details.getJson("Employee_Name").get("name");
+app_id = app_Details.getJson("Employee_Name").get("id");
+contact_Details = zoho.crm.getRecordById("Contacts",app_id.toLong());
+// info contact_Details.get("Email");
+//Merged the fields from VISA Applications module to IFZA form in Zoho Writer
+application_Details = zoho.crm.getRelatedRecords("Applications","Applications1",application_id);
+//Date validation of Passport_Issue_Date
+if(application_Details.getJson("Passport_Issue_Date") != null)
+{
+	pid = ifnull(application_Details.getJson("Passport_Issue_Date").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	pid = ifnull(application_Details.getJson("Passport_Issue_Date")," ");
+}
+//date validation of Passport_Expiry_Date
+if(application_Details.getJson("Passport_Expiry_Date") != null)
+{
+	ped = ifnull(application_Details.getJson("Passport_Expiry_Date").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	ped = ifnull(application_Details.getJson("Passport_Expiry_Date")," ");
+}
+//date validation of Passport_Expiry_Date
+// if ( application_Details.getJson("Passport_Expiry_Date") != null ) 
+// {
+// 	ped = ifnull(application_Details.getJson("Passport_Expiry_Date").tostring("MMM dd, yyyy")," ");
+// }
+// else 
+// {
+// 	ped = ifnull(application_Details.getJson("Passport_Expiry_Date")," ");
+// }
+//date validation of Date_of_Birth
+if(application_Details.getJson("Date_of_Birth") != null)
+{
+	dob = ifnull(application_Details.getJson("Date_of_Birth").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	dob = ifnull(application_Details.getJson("Date_of_Birth")," ");
+}
+//date validation of EID_Expiry_Date1
+if(application_Details.getJson("EID_Expiry_Date1") != null)
+{
+	eid = ifnull(application_Details.getJson("EID_Expiry_Date1").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	eid = ifnull(application_Details.getJson("EID_Expiry_Date1")," ");
+}
+//date validation of Start_Date
+if(application_Details.getJson("Start_Date") != null)
+{
+	sd = ifnull(application_Details.getJson("Start_Date").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	sd = ifnull(application_Details.getJson("Start_Date")," ");
+}
+//date validation of Visa_Valid_Until
+if(application_Details.getJson("Visa_Valid_Until") != null)
+{
+	vu = ifnull(application_Details.getJson("Visa_Valid_Until").tostring("MMM dd, yyyy")," ");
+}
+else
+{
+	vu = ifnull(application_Details.getJson("Visa_Valid_Until")," ");
+}
+info application_Details;
+InsideParam = Map();
+InsideParam.put("Visa_Valid_Until",vu);
+InsideParam.put("Name",application_Details.getJson("First_Name"));
+InsideParam.put("Last_Name",application_Details.getJson("Name"));
+InsideParam.put("Middle_Name",application_Details.getJson("Middle_Name"));
+InsideParam.put("Email",application_Details.getJson("Email"));
+InsideParam.put("Mobile_Number",application_Details.getJson("Mobile_Number"));
+InsideParam.put("Address",application_Details.getJson("Address"));
+InsideParam.put("City",application_Details.getJson("City"));
+InsideParam.put("State",application_Details.getJson("State"));
+InsideParam.put("Country",application_Details.getJson("Country"));
+InsideParam.put("Country1",application_Details.getJson("Country1"));
+InsideParam.put("Country2",application_Details.getJson("Country2"));
+InsideParam.put("Emirate",application_Details.getJson("Emirate"));
+InsideParam.put("PO_Box",application_Details.getJson("PO_Box"));
+InsideParam.put("Postal_Code",application_Details.getJson("Postal_Code"));
+InsideParam.put("Address2",application_Details.getJson("Address2"));
+InsideParam.put("City2",application_Details.getJson("City2"));
+InsideParam.put("State2",application_Details.getJson("State2"));
+InsideParam.put("Country2",application_Details.getJson("Country2"));
+InsideParam.put("Emirate2",application_Details.getJson("Emirate2"));
+InsideParam.put("PO_Box2",application_Details.getJson("PO_Box2"));
+InsideParam.put("Postal_Code2",application_Details.getJson("Postal_Code2"));
+InsideParam.put("Nationality",application_Details.getJson("Nationality"));
+InsideParam.put("Passport_Number",application_Details.getJson("Passport_Number"));
+InsideParam.put("Issue_City",application_Details.getJson("Issue_City"));
+InsideParam.put("Issue_Country",application_Details.getJson("Issue_Country"));
+InsideParam.put("Passport_Issue_Date",pid);
+InsideParam.put("Passport_Expiry_Date",ped);
+InsideParam.put("City_of_Birth",application_Details.getJson("City_of_Birth"));
+InsideParam.put("Country_of_Birth",application_Details.getJson("Country_of_Birth"));
+InsideParam.put("Date_of_Birth",dob);
+InsideParam.put("EID_Expiry_Date1",eid);
+InsideParam.put("Gender",application_Details.getJson("Gender"));
+InsideParam.put("Previous_Nationality",application_Details.getJson("Previous_Nationality"));
+InsideParam.put("Marital_Status",application_Details.getJson("Marital_Status"));
+InsideParam.put("Religion",application_Details.getJson("Religion"));
+InsideParam.put("If_Islam_please_indicate_subcategory",application_Details.getJson("If_Islam_please_indicate_subcategory"));
+InsideParam.put("Language_Spoken",application_Details.getJson("Language_Spoken"));
+InsideParam.put("Father_s_Full_Name",application_Details.getJson("Father_s_Full_Name"));
+InsideParam.put("Mother_s_Full_Name",application_Details.getJson("Mother_s_Full_Name"));
+InsideParam.put("Job_Title",application_Details.getJson("Job_Title"));
+InsideParam.put("Start_Date",sd);
+InsideParam.put("Probation_Period_0_6_months",application_Details.getJson("Probation_Period_0_6_months"));
+InsideParam.put("Termination_Notice_1_3_months",application_Details.getJson("Termination_Notice_1_3_months"));
+InsideParam.put("Education_Qualifications",application_Details.getJson("Education_Qualifications"));
+InsideParam.put("Basic_Salary_AED",application_Details.getJson("Basic_Salary_AED"));
+InsideParam.put("Transportation_Allowance_AED",application_Details.getJson("Transportation_Allowance_AED"));
+InsideParam.put("Total_Monthly_Salary_AED",application_Details.getJson("Total_Monthly_Salary_AED"));
+InsideParam.put("Return_Ticket_Eligibility_Economy_Business_or_Fi",application_Details.getJson("Return_Ticket_Eligibility_Economy_Business_or_Fi"));
+InsideParam.put("Ticket_Entitlement_Period_None_1_or_2_Years",application_Details.getJson("Ticket_Entitlement_Period_None_1_or_2_Years"));
+InsideParam.put("Accomodation_Allowance_AED",application_Details.getJson("Accomodation_Allowance_AED"));
+InsideParam.put("Other_Allowance_AED",application_Details.getJson("Other_Allowance_AED"));
+InsideParam.put("Company_Name",application_Details.getJson("Company_Name"));
+InsideParam.put("Establishment_Card_Number",application_Details.getJson("Establishment_Card_Number"));
+InsideParam.put("Service_Required_Current_Visa_Status",application_Details.getJson("Service_Required_Current_Visa_Status"));
+InsideParam.put("Service_Required",application_Details.getJson("Service_Required"));
+InsideParam.put("Service_Required_VISA_Type",application_Details.getJson("Service_Required_VISA_Type"));
+InsideParam.put("Do_you_have_emirates_ID",application_Details.getJson("Do_you_have_emirates_ID"));
+InsideParam.put("If_Yes_please_provide_EID_Number1",application_Details.getJson("If_Yes_please_provide_EID_Number1"));
+InsideParam.put("Do_you_have_emirates_ID",application_Details.getJson("Do_you_have_emirates_ID"));
+// InsideParam.put("EID_Expiry_Date1",application_Details.getJson("EID_Expiry_Date1"));
+InsideParam.put("General_Manager_Email",application_Details.getJson("General_Manager_Email"));
+InsideParam.put("General_Manager_Name",application_Details.getJson("General_Manager_Name"));
+InsideParam.put("Salutation",application_Details.getJson("Salutation"));
+InsideParam.put("Type_of_Employment_Contract",application_Details.getJson("Type_of_Employment_Contract"));
+InsideParam.put("please_specify_duration_of_contract_in_months",application_Details.getJson("please_specify_duration_of_contract_in_months"));
+InsideParam.put("Annual_Leave_Entitlement",application_Details.getJson("Annual_Leave_Entitlement"));
+InsideParam.put("If_Islam_please_indicate_subcategory",application_Details.getJson("If_Islam_please_indicate_subcategory"));
+InsideParam.put("Language_Spoken",application_Details.getJson("Language_Spoken"));
+InsideParam.put("Company",application_Details.getJson("Company"));
+InsideParam.put("Job_Title",application_Details.getJson("Job_Title"));
+InsideParam.put("Trade_License_Number",application_Details.getJson("Trade_License_Number"));
+InsideParam.put("If_Working_Days_please_specify_leave_duration",application_Details.getJson("If_Working_Days_please_specify_leave_duration"));
+outsideParam = Map();
+outsideParam.put("doc_name","Visa Application Form - ".concat(application_number));
+file = zoho.writer.mergeAndStore("dgahie048527402014493bbb04a5f60b616ee",InsideParam,outsideParam,"writercrm2");
+forSignature = file.getJson("document_id").toString();
+param = Map();
+param.put("message","Visa Application Form Message - ".concat(application_number));
+param.put("subject","Visa Application Form - ".concat(application_number));
+param.put("merge_data",{"data":InsideParam});
+param.put("output_format","pdf");
+param.put("recipient_email","rey@tlz.ae");
+param.put("from_email","rey@tlz.ae");
+//optional
+writer_details = invokeurl
+[
+	url :"https://zohoapis.com/writer/api/v1/documents/" + forSignature + "/merge/email"
+	type :post
+	parameters:param
+	connection:"writercrm2"
+];
+//publish the document to external
+published_params = Map();
+published_params.put("scope","external");
+published_details = invokeurl
+[
+	url :"https://zohoapis.com/writer/api/v1/documents/" + forSignature + "/publish"
+	type :post
+	parameters:published_params
+	connection:"writercrm2"
+];
+published_link = published_details.get("published_url");
+info published_link;
+info writer_details;
+records = writer_details.getJson("records");
+d_link = records.getJSON("download_link");
+info d_link;
+mp = Map();
+mp.put("New_Residence_Visa_Download_URL",published_link);
+res = zoho.crm.updateRecord("Applications1",application_id,mp);
+info res;
