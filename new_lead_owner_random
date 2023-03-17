@@ -1,0 +1,28 @@
+lead_details = zoho.crm.getRecordById("Leads",lead_id);
+random = 0.randomNumber(6);
+info random;
+current_owner_email = lead_details.get("Owner").get("email");
+sales = "vini@tlz.ae|amir@tlz.ae|danica@tlz.ae|pradeesha@tlz.ae|ranna@tlz.ae|thomas@tlz.ae|oliver@tlz.ae|rey@tlz.ae";
+sales_filter = sales.removeFirstOccurence(current_owner_email);
+salesList = sales_filter.toList("|");
+info salesList;
+for each  s in salesList
+{
+	if(salesList.indexOf(s) == random)
+	{
+		info salesList.indexOf(s);
+		response = zoho.crm.searchRecords("users","(email:equals:" + s + ")");
+		info response;
+		new_owner_id = response.getJson("users").getJson("id");
+		info new_owner_id;
+		new_owner_name = response.getJson("users").getJson("alias");
+		mp = Map();
+		mp.put("Owner",new_owner_id);
+		update_lead_details = zoho.crm.updateRecord("Leads",lead_id,mp);
+	}
+	else
+	{
+		//nothing
+	}
+}
+return "The new Lead Owner is: " + new_owner_name;
