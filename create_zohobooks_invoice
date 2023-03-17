@@ -1,0 +1,256 @@
+quote_details = zoho.crm.getRecordById("Quotes",quoteid.toLong());
+already_created = ifnull(quote_details.get("Already_Created_ZB"),"");
+productDetails = quote_details.get("Product_Details");
+acctid = quote_details.get("Account_Name").get("id");
+dealid = quote_details.get("Deal_Name").get("id");
+dealmap = zoho.crm.getRecordById("Deals",dealid.tolong());
+quotenum = ifnull(quote_details.get("Quote_Number"),"");
+custlist = List();
+custmp = Map();
+custmp.put("label","Quote Number");
+custmp.put("value",quotenum);
+custlist.add(custmp);
+//added to update invoice type - beg
+custmp1 = Map();
+custmp1.put("label","Invoice Type");
+custmp1.put("value","Customer Invoice");
+custlist.add(custmp1);
+info productDetails;
+prodlist1 = List();
+for each  rec in productDetails
+{
+	prod_id = ifnull(rec.get("product").get("id"),"");
+	prod_details = zoho.crm.getRecordById("Products",prod_id.toLong());
+	prodinfo = ifnull(rec.get("product"),"");
+	if(prod_details.get("Product_Code").containsIgnoreCase("Combo") || prod_details.get("Product_Code").containsIgnoreCase("combo") || prod_details.get("Product_Code").containsIgnoreCase("Group") || prod_details.get("Product_Code").containsIgnoreCase("group"))
+	{
+		//products module
+		main_prod_id = prodinfo.get("id");
+		main_prod_details = zoho.crm.getRecordById("Products",main_prod_id.toLong());
+		main_prod_subform = main_prod_details.get("Product_Sub_Items");
+		for each  sub in main_prod_subform
+		{
+			sub_prod_id = sub.get("Sub_Product_Name").get("id").toLong();
+			sub_prod_details = zoho.crm.getRecordById("Products",sub_prod_id.toLong());
+			tax_cat = ifnull(sub_prod_details.get("Tax_Category_ZOHO_Books"),"");
+			qty = sub.get("Quantity");
+			disc = sub.get("Discount").toString();
+			price = sub.get("Unit_Price");
+			s_com = sub.get("S_Commission").toDecimal();
+			cost_to_accrue = sub.get("Cost_to_Accrue").toDecimal();
+			desc = ifnull(sub.get("Description")," ");
+			iteminfo = zoho.books.getRecords("Items","682374092","zcrm_product_id=" + sub_prod_id).get("items");
+			clist = List();
+			imap_customfield_with_combo1 = Map();
+			imap_customfield_with_combo1.put("api_name","cf_cost_to_accrue");
+			imap_customfield_with_combo1.put("value",cost_to_accrue);
+			clist.add(imap_customfield_with_combo1);
+			imap_customfield_with_combo2 = Map();
+			imap_customfield_with_combo2.put("api_name","cf_supp_comm");
+			imap_customfield_with_combo2.put("value",s_com);
+			clist.add(imap_customfield_with_combo2);
+			for each  item in iteminfo
+			{
+				itemid = item.get("item_id");
+				item_details = zoho.books.getRecordsByID("Items","682374092",itemid).get("item");
+				// 				custom_fields_with_combo = item_details.get("custom_fields");
+				// 				clist = List();
+				// 				for each  c_field_with_combo in custom_fields_with_combo
+				// 				{
+				// 					fieldId_with_combo = c_field_with_combo.get("field_id");
+				// 					customfieldId_with_combo = c_field_with_combo.get("customfield_id");
+				// 					imap_customfield_with_combo = Map();
+				// 					imap_customfield_with_combo.put("field_id",fieldId_with_combo);
+				// 					imap_customfield_with_combo.put("customfield_id",customfieldId_with_combo);
+				// 					clist.add(imap_customfield_with_combo);
+				// 				}
+				tags = item_details.get("tags").toList();
+				info "with combo";
+				info tags;
+				tlist = List();
+				for each  f in tags
+				{
+					tagID = f.get("tag_id");
+					tagOption_id = f.get("tag_option_id");
+					imap = Map();
+					imap.put("tag_id",tagID);
+					imap.put("tag_option_id",tagOption_id);
+					tlist.add(imap);
+				}
+			}
+			prodmp = Map();
+			prodmp.put("item_id",itemid);
+			prodmp.put("rate",price);
+			prodmp.put("quantity",qty);
+			prodmp.put("description",desc);
+			prodmp.put("discount",disc);
+			prodmp.put("tags",tlist);
+			prodmp.put("item_custom_fields",clist);
+			if(tax_cat.containsIgnoreCase("Standard"))
+			{
+				//standard
+				prodmp.put("tax_id","1711778000000067136");
+				prodmp.put("tax_name","Standard Rate");
+				prodmp.put("tax_percentage",5);
+			}
+			if(tax_cat.containsIgnoreCase("Zero"))
+			{
+				//zero rate
+				prodmp.put("tax_id","1711778000000067140");
+				prodmp.put("tax_name","Zero Rate");
+				prodmp.put("tax_percentage",0);
+			}
+			if(tax_cat.containsIgnoreCase("Out of Scope"))
+			{
+				//out of scope
+				prodmp.put("tax_exemption_id","1711778000000067129");
+				prodmp.put("tax_exemption_code","OUTOFSCOPE");
+				prodmp.put("tax_treatment_code","uae_others");
+			}
+			if(tax_cat.containsIgnoreCase("Exempt"))
+			{
+				//Exempt
+				prodmp.put("tax_exemption_id","1711778000000067126");
+				prodmp.put("tax_exemption_code","EXEMPT");
+			}
+			prodlist1.add(prodmp);
+		}
+	}
+	if(prodinfo.get("Product_Code").containsIgnoreCase("Combo") || prodinfo.get("Product_Code").containsIgnoreCase("combo") || prodinfo.get("Product_Code").containsIgnoreCase("group") || prodinfo.get("Product_Code").containsIgnoreCase("Group"))
+	{
+		//nothing
+	}
+	else
+	{
+		prodid = rec.get("product").get("id");
+		iteminfo = zoho.books.getRecords("Items","682374092","zcrm_product_id=" + prodid).get("items");
+		custom_fields_list = List();
+		for each  item in iteminfo
+		{
+			itemid = item.get("item_id");
+			item_details_non_combo = zoho.books.getRecordsByID("Items","682374092",itemid).get("item");
+			custom_fields_non_combo = item_details_non_combo.get("custom_fields");
+			for each  c_field in custom_fields_non_combo
+			{
+				fieldId = c_field.get("field_id");
+				customfieldId = c_field.get("customfield_id");
+				imap_customfield = Map();
+				imap_customfield.put("field_id",fieldId);
+				imap_customfield.put("customfield_id",customfieldId);
+				custom_fields_list.add(imap_customfield);
+			}
+			tags_no_combo = item_details_non_combo.get("tags").toList();
+			info "no combo";
+			info tags_no_combo;
+			tag_list = List();
+			for each  tag_nc in tags_no_combo
+			{
+				tagID_no_combo = tag_nc.get("tag_id");
+				tagOption_id_no_combo = tag_nc.get("tag_option_id");
+				imap2 = Map();
+				imap2.put("tag_id",tagID_no_combo);
+				imap2.put("tag_option_id",tagOption_id_no_combo);
+				tag_list.add(imap2);
+			}
+		}
+		non_combo_prod_id = prodinfo.get("id");
+		non_combo_prod_details = zoho.crm.getRecordById("Products",non_combo_prod_id.toLong());
+		non_combo_tax_cat = ifnull(non_combo_prod_details.get("Tax_Category_ZOHO_Books"),"");
+		quantity = rec.get("quantity");
+		discount2 = rec.get("Discount").toString();
+		listPrice = rec.get("list_price").toDecimal();
+		description = ifnull(rec.get("product_description")," ");
+		prodmp2 = Map();
+		prodmp2.put("item_id",itemid);
+		prodmp2.put("rate",listPrice);
+		prodmp2.put("quantity",quantity);
+		prodmp2.put("description",description);
+		prodmp2.put("discount",discount2);
+		prodmp2.put("tags",tag_list);
+		prodmp2.put("item_custom_fields",custom_fields_list);
+		if(non_combo_tax_cat.containsIgnoreCase("Standard"))
+		{
+			//standard
+			prodmp2.put("tax_id","1711778000000067136");
+			prodmp2.put("tax_name","Standard Rate");
+			prodmp2.put("tax_percentage",5);
+		}
+		if(non_combo_tax_cat.containsIgnoreCase("Zero"))
+		{
+			//zero rate
+			prodmp2.put("tax_id","1711778000000067140");
+			prodmp2.put("tax_name","Zero Rate");
+			prodmp2.put("tax_percentage",0);
+		}
+		if(non_combo_tax_cat.containsIgnoreCase("Out of Scope"))
+		{
+			//out of scope
+			prodmp2.put("tax_exemption_id","1711778000000067129");
+			prodmp2.put("tax_exemption_code","OUTOFSCOPE");
+			prodmp2.put("tax_treatment_code","uae_others");
+		}
+		if(non_combo_tax_cat.containsIgnoreCase("Exempt"))
+		{
+			//Exempt
+			prodmp2.put("tax_exemption_id","1711778000000067126");
+			prodmp2.put("tax_exemption_code","EXEMPT");
+		}
+		prodlist1.add(prodmp2);
+	}
+}
+//start of Update Contact Vat Reg No
+continfo = zoho.books.getRecords("Contacts","682374092","zcrm_account_id=" + acctid).getJSON("contacts");
+contact_id = continfo.getJson("contact_id");
+info continfo;
+vatregno = ifnull(continfo.getJSON("vat_reg_no"),'000000000000000');
+taxregno = ifnull(continfo.getJSON("tax_reg_no"),'000000000000000');
+contact_mp = Map();
+contact_mp.put("vat_reg_no",vatregno);
+contact_mp.put("tax_reg_no",taxregno);
+contact_mp.put("tax_treatment","vat_registered");
+//end of vat reg
+// Start of Invoice Creation
+for each  rec1 in continfo
+{
+	//added to retrieve the vat registration number of the contact
+	customerid = rec1.getJSON("contact_id");
+	//added to retrieve the vat registration number of the contact
+	vatregno = ifnull(rec1.getJSON("vat_reg_no"),'000000000000000');
+	taxregno = ifnull(rec1.getJSON("tax_reg_no"),'000000000000000');
+}
+mp = Map();
+mp.put("customer_id",customerid);
+mp.put("line_items",prodlist1);
+mp.put("date",today);
+mp.put("custom_fields",custlist);
+mp.put("tax_treatment","vat_registered");
+// added to retrieve the vat registration number of the contact //
+mp.put("vat_reg_no",vatregno);
+mp.put("tax_reg_no",taxregno);
+// added to retrieve the vat registration number of the contact //
+mp.put("is_inclusive_tax",true);
+mp.put("invoice_date",today);
+mp.put("place_of_supply","DU");
+mp.put("zcrm_potential_id",dealid.toLong());
+mp.put("salesperson_name",dealmap.get("Owner").get("name"));
+if(already_created == false)
+{
+	crm_quoteMap = Map();
+	crm_quoteMap.put("Already_Created_ZB",true);
+	update_quote = zoho.crm.updateRecord("Quotes",quoteid,crm_quoteMap);
+	info update_quote;
+	res1 = zoho.books.createRecord("Invoices","682374092",mp);
+	res_contacts_books = zoho.books.updateRecord("Contacts","682374092",contact_id,contact_mp,"crm_books_contacts");
+	if(res1.toString().contains("The invoice has been created"))
+	{
+		return "Successfully, Invoice is Created!";
+	}
+	else
+	{
+		return "UnSuccessfully Invoice is not Created!";
+	}
+}
+else
+{
+	return "UnSuccessfully Invoice is not Created!";
+}
