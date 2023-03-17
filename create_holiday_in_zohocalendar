@@ -1,0 +1,72 @@
+holiday_details = zoho.crm.getRecordById("Holidays",holiday_id);
+start = holiday_details.get("Start");
+end = holiday_details.get("End");
+title_holiday = holiday_details.get("Name1");
+ctime = zoho.currenttime;
+current_year = zoho.currentdate.getYear();
+calendar_uids = "ab2521b4bdf34c97b730d9c710a2df50|0da328edc41e4cf7b78d35b71a5669f4|37be35ae13774929b18ebda56e12e549|4c87a32014474ca8944b5c7d7f9e49b2|4e3238b11ab64b6fbd936222a8a1c214|d0d56e8aa82847ed8e8c64a2bf6a04a7|e1989deb55904b4d82e5a6373e8c443f";
+calendar_uid_list = calendar_uids.toList("|");
+for each  cal_uid in calendar_uid_list
+{
+	calendar_url = "https://calendar.zoho.com/api/v1/calendars/" + cal_uid + "/events";
+	data1 = Map();
+	data1.put("calendaruid",cal_uid);
+	eventdata1 = Map();
+	eventdata1.put("eventdata",data1);
+	calendar_details = invokeurl
+	[
+		url :calendar_url
+		type :GET
+		parameters:eventdata1.toString()
+		connection:"calendar_connection"
+	];
+	events = calendar_details.getJson("events");
+	for each  event in events
+	{
+		event_year = event.getJson("dateandtime").getJSON("start");
+		if(event_year.containsIgnoreCase(current_year))
+		{
+			info "Event Year: " + event_year;
+			title = event.getJson("title");
+			info title;
+			current_events = calendar_details.getJson("events");
+			if(title_holiday.containsIgnoreCase(title))
+			{
+				uid = event.getJson("uid");
+				e_tag = event.getJson("etag");
+				calendar_del_url = "https://calendar.zoho.com/api/v1/calendars/" + cal_uid + "/events/" + uid;
+				headerMap = Map();
+				headerMap.put("etag",e_tag);
+				data = Map();
+				data.put("eventuid",uid);
+				data.put("calendaruid",cal_uid);
+				eventdata = Map();
+				eventdata.put("eventdata",data);
+				calendar_del_details = invokeurl
+				[
+					url :calendar_del_url
+					type :DELETE
+					parameters:eventdata.toString()
+					headers:headerMap
+					connection:"calendar_connection"
+				];
+				info "Calendar Delete Details: " + calendar_del_details.getJson("events");
+			}
+		}
+	}
+	startdate = start.toString("yyyyMMdd'T'HHmmss'+0400'");
+	enddate = end.toString("yyyyMMdd'T'230000'+0400'");
+	dateandtime_map = Map();
+	dateandtime_map.put("timezone","Asia/Dubai");
+	dateandtime_map.put("start",startdate);
+	dateandtime_map.put("end",enddate);
+	eventDetails = Map();
+	eventDetails.put("dateandtime",dateandtime_map);
+	eventDetails.put("estatus","added");
+	eventDetails.put("title",title_holiday);
+	// eventDetails.put("isallday",true);
+	event = Map();
+	event.put("eventdata",eventDetails);
+	response1 = zoho.calendar.createEvent(cal_uid,event,"calendar_connection");
+	info "Response 1: " + response1;
+}
