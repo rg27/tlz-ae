@@ -1,0 +1,63 @@
+leave_details = zoho.crm.getRecordById("Leave_Forms",leave_id);
+first_day_of_leave = ifnull(leave_details.get("First_day_of_leave"),"");
+enddate_of_leave = ifnull(leave_details.get("Return_to_work_date"),"");
+end_leave = enddate_of_leave.subDay(1);
+total_number_wd = ifnull(leave_details.get("Total_No_of_Working_Days"),"");
+name = ifnull(leave_details.get("Name"),"");
+time = ifnull(leave_details.get("Time"),"");
+lt = ifnull(leave_details.get("Leave_Type"),"");
+leave_forms_id = leave_details.get("id");
+employee_email = leave_details.get("Email");
+if(total_number_wd == 1)
+{
+	startdate = first_day_of_leave.toString("yyyyMMdd'T'HHmmss'+0400'");
+	enddate = end_leave.toString("yyyyMMdd'T'HHmmss'+0400'");
+	t = "1 day";
+	event_title = lt + " - " + name + " - " + total_number_wd + " Working Day";
+}
+if(total_number_wd == 0.5)
+{
+	startdate = first_day_of_leave.toString("yyyyMMdd'T'HHmmss'+0400'");
+	enddate = first_day_of_leave.toString("yyyyMMdd'T'HHmmss'+0400'");
+	t = time;
+	event_title = lt + " - " + name + " - " + total_number_wd + " Working Day" + " - " + t;
+}
+if(total_number_wd > 1)
+{
+	startdate = first_day_of_leave.toString("yyyyMMdd'T'HHmmss'+0400'");
+	enddate = enddate_of_leave.toString("yyyyMMdd'T'HHmmss'+0400'");
+	event_title = lt + " - " + name + " - " + total_number_wd + " Working Days";
+}
+if(employee_email.containsIgnoreCase("rey@tlz.ae") || employee_email.containsIgnoreCase("harold") || employee_email.containsIgnoreCase("efren") || employee_email.containsIgnoreCase("zameer") || employee_email.containsIgnoreCase("gualvezreymar@gmail.com"))
+{
+	finance_calendar = "37be35ae13774929b18ebda56e12e549";
+}
+if(employee_email.containsIgnoreCase("oliver") || employee_email.containsIgnoreCase("archie") || employee_email.containsIgnoreCase("junlie"))
+{
+	finance_calendar = "4c87a32014474ca8944b5c7d7f9e49b2";
+}
+if(employee_email.containsIgnoreCase("ana") || employee_email.containsIgnoreCase("vini") || employee_email.containsIgnoreCase("ranna") || employee_email.containsIgnoreCase("amir") || employee_email.containsIgnoreCase("thomas") || employee_email.containsIgnoreCase("pradeesha") || employee_email.containsIgnoreCase("danica"))
+{
+	finance_calendar = "4e3238b11ab64b6fbd936222a8a1c214";
+}
+if(employee_email.containsIgnoreCase("margaret") || employee_email.containsIgnoreCase("amor") || employee_email.containsIgnoreCase("dinah") || employee_email.containsIgnoreCase("gerald") || employee_email.containsIgnoreCase("maria") || employee_email.containsIgnoreCase("danah"))
+{
+	finance_calendar = "d0d56e8aa82847ed8e8c64a2bf6a04a7";
+}
+if(employee_email.containsIgnoreCase("jerome") || employee_email.containsIgnoreCase("gil") || employee_email.containsIgnoreCase("roberto"))
+{
+	finance_calendar = "e1989deb55904b4d82e5a6373e8c443f";
+}
+dateandtime_map = Map();
+dateandtime_map.put("timezone","Asia/Dubai");
+dateandtime_map.put("start",startdate);
+dateandtime_map.put("end",enddate);
+eventDetails = Map();
+eventDetails.put("dateandtime",dateandtime_map);
+eventDetails.put("estatus","added");
+eventDetails.put("title",event_title);
+// eventDetails.put("isallday",true);
+event = Map();
+event.put("eventdata",eventDetails);
+response = zoho.calendar.createEvent(finance_calendar,event,"calendar_connection");
+info response;
