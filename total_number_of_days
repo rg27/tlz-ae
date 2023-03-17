@@ -1,0 +1,66 @@
+leave_details = zoho.crm.getRecordById("Leave_Forms",leave_id);
+// info leave_details ;
+first_day = ifnull(leave_details.get("First_day_of_leave"),"");
+info "first day: " + first_day;
+return_date = ifnull(leave_details.get("Return_to_work_date"),"");
+info "return date: " + return_date;
+leavedate = ifnull(leave_details.get("Leave_Date"),"");
+halfday = ifnull(leave_details.get("Halfday"),"");
+holiday_list = List();
+holidays_details = zoho.crm.getRecords("Holidays");
+// info holidays_details ;
+for each  holiday in holidays_details
+{
+	started_date = holiday.getJson("Start");
+	info "Started Date: " + started_date;
+	end_date = holiday.getJson("End");
+	info "End Date: " + end_date;
+	if(started_date != null)
+	{
+		days_bet = started_date.daysBetween(end_date) + 1;
+	}
+	info "days bet: " + days_bet;
+	if(days_bet > 0)
+	{
+		counter = leftpad("1",days_bet).replaceAll(" ","1,").toList();
+		info "Counter: " + counter;
+		for each index i in counter
+		{
+			info "III: " + i;
+			if(started_date != null)
+			{
+				holiday_list.add(holiday.get("Start").addDay(i));
+			}
+		}
+	}
+	else
+	{
+		//nothing
+	}
+	info holiday_list;
+}
+if(halfday == false)
+{
+	num_work_days = first_day.workDaysBetween(return_date,{"Saturday","Sunday"},holiday_list);
+	num_work_days_neg = "-" + num_work_days;
+	ret_date = return_date;
+	info "Num work days: " + num_work_days;
+}
+else
+{
+	ret_date = leavedate;
+	num_work_days = 0.5;
+	num_work_days_neg = "-" + num_work_days;
+	l_date = leavedate;
+}
+mp = Map();
+mp.put("Total_No_of_Working_Days",num_work_days.toDecimal());
+mp.put("Transaction_Workdays",num_work_days_neg.toDecimal());
+mp.put("Transaction_Date",ret_date);
+if(halfday == true)
+{
+	mp.put("First_day_of_leave",l_date);
+	mp.put("Return_to_work_date",l_date);
+}
+res = zoho.crm.updateRecord("Leave_Forms",leave_id,mp,{"trigger":{"workflow"}});
+info res;
