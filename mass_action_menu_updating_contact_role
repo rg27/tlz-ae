@@ -1,0 +1,32 @@
+accountIdsList = accountId.toList("|||");
+for each  accountIdstr in accountIdsList
+{
+	accountmap = zoho.crm.getRecordById("Accounts",accountIdstr.tolong());
+	relcontacts = zoho.crm.getRelatedRecords("Contacts","Accounts",accountIdstr.tolong());
+	subformlist = List();
+	for each  rec in relcontacts
+	{
+		contactId = ifnull(rec.get("id").toLong(),"");
+		contactmap = zoho.crm.getRecordById("Contacts",contactId);
+		contactemail = contactmap.get("Email");
+		contactmobile = contactmap.get("Mobile");
+		contactnationality = contactmap.get("Nationality");
+		if(contactId != "")
+		{
+			subformmap = Map();
+			subformmap.put("Contact_Name",contactId.tolong());
+			subformmap.put("Contact_Number",contactmobile);
+			subformmap.put("Email_Address",contactemail);
+			subformmap.put("Nationality",contactnationality);
+			subformmap.put("PC",true);
+			subformmap.put("PIC",true);
+			subformlist.add(subformmap);
+		}
+	}
+	info subformlist;
+	parammap = Map();
+	parammap.put("Contacts_Roles",subformlist);
+	update = zoho.crm.updateRecord("Accounts",accountIdstr.toLong(),parammap);
+	info update;
+}
+return "Updated";
