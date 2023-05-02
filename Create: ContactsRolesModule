@@ -127,18 +127,20 @@ for each  rec in contact_roles
 	contactShareholder = rec.get("Shareholder");
 	subformmap = Map();
 	subformmap.put("Account_Name",account_id);
-	subformmap.put("Contact_Number_1",contactmobile);
-	subformmap.put("PC_Email",contactemail);
 	subformmap.put("PIC",contactPIC);
 	subformmap.put("PC",contactPC);
 	subformmap.put("Shareholder",contactShareholder);
 	if(contactPIC == true)
 	{
 		subformmap.put("Hierarchy","Main");
+		subformmap.put("Contact_Number_1",contactmobile);
+		subformmap.put("PC_Email",contactemail);
 	}
 	else
 	{
 		subformmap.put("Hierarchy","Others");
+		subformmap.put("Contact_Number_1",rp_bp_mobile);
+		subformmap.put("PC_Email",contactemail);
 	}
 	// 	info subformlist;
 	contact_details = zoho.crm.getRecordById("Contacts",contactId.toLong());
