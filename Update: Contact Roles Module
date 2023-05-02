@@ -110,8 +110,16 @@ for each  rec in contact_roles
 				info "PC:" + contactPC;
 				sub_formmap1 = Map();
 				sub_formmap1.put("Account_Name",account_id);
-				sub_formmap1.put("Contact_Number_1",ifnull(account_details.get("Contact_Number"),""));
-				sub_formmap1.put("PC_Email",ifnull(account_details.get("PC_Email"),""));
+				if(contactPC == false)
+				{
+					sub_formmap1.put("Contact_Number_1",contactmobile);
+					sub_formmap1.put("PC_Email",account_contact_role_contact_email);
+				}
+				else
+				{
+					sub_formmap1.put("Contact_Number_1",rp_bp_mobile);
+					sub_formmap1.put("PC_Email",rp_bp_email);
+				}
 				sub_formmap1.put("PIC",contactPIC);
 				sub_formmap1.put("PC",contactPC);
 				sub_formmap1.put("Shareholder",contactShareholder);
@@ -140,8 +148,16 @@ for each  rec in contact_roles
 		{
 			sub_formmap5 = Map();
 			sub_formmap5.put("Account_Name",account_id);
-			sub_formmap5.put("Contact_Number_1",contactmobile);
-			sub_formmap5.put("PC_Email",account_contact_role_contact_email);
+			if(contactPC == false)
+			{
+				sub_formmap5.put("Contact_Number_1",contactmobile);
+				sub_formmap5.put("PC_Email",account_contact_role_contact_email);
+			}
+			else
+			{
+				sub_formmap5.put("Contact_Number_1",rp_bp_mobile);
+				sub_formmap5.put("PC_Email",rp_bp_email);
+			}
 			sub_formmap5.put("PIC",contactPIC);
 			sub_formmap5.put("PC",contactPC);
 			sub_formmap5.put("Shareholder",contactShareholder);
@@ -153,8 +169,16 @@ for each  rec in contact_roles
 	{
 		sub_formmap4 = Map();
 		sub_formmap4.put("Account_Name",account_id);
-		sub_formmap4.put("Contact_Number_1",contactmobile);
-		sub_formmap4.put("PC_Email",account_contact_role_contact_email);
+		if(contactPC == false)
+		{
+			sub_formmap4.put("Contact_Number_1",contactmobile);
+			sub_formmap4.put("PC_Email",account_contact_role_contact_email);
+		}
+		else
+		{
+			sub_formmap4.put("Contact_Number_1",rp_bp_mobile);
+			sub_formmap4.put("PC_Email",rp_bp_email);
+		}
 		sub_formmap4.put("PIC",contactPIC);
 		sub_formmap4.put("PC",contactPC);
 		sub_formmap4.put("Shareholder",contactShareholder);
