@@ -1,0 +1,168 @@
+accountmap = zoho.crm.getRecordById("Accounts",account_id.tolong());
+relcontacts = zoho.crm.getRelatedRecords("Contacts","Accounts",account_id.tolong());
+contact_partner = accountmap.get("Contact_Partner_Only");
+account_lead_source = accountmap.get("Lead_Source");
+if(account_lead_source.containsIgnoreCase("Business Partner Referrals"))
+{
+	//might need an update
+	rp_bp_id = ifnull(accountmap.get("Test_Business_Partner").get("id"),"");
+	rp_bp_details = zoho.crm.getRecordById("Business_Partners",rp_bp_id.toLong());
+	rp_bp_email = rp_bp_details.get("Email");
+	rp_bp_mobile = rp_bp_details.get("Mobile");
+	contact_person_id = ifnull(rp_bp_details.get("Contact_Person").get("id"),"");
+}
+if(account_lead_source.containsIgnoreCase("Referral Partner Referrals"))
+{
+	//might need an update
+	rp_bp_id = ifnull(accountmap.get("Test_Referral_Partner").get("id"),"");
+	rp_bp_details = zoho.crm.getRecordById("Referral_Partners",rp_bp_id.toLong());
+	rp_bp_email = rp_bp_details.get("Email");
+	//might need an update
+	contact_person_id = ifnull(rp_bp_details.get("Test_Contact_Person").get("id"),"");
+	rp_bp_mobile = rp_bp_details.get("Mobile");
+}
+flag = 0;
+subform = ifnull(accountmap.get("Contacts_Roles"),"");
+oldsubform = List();
+for each  ele in subform
+{
+	contactsubId = ele.get("Contact_Name").get("id");
+	pc_status = ele.get("PC");
+	if(contactsubId != contact_person_id)
+	{
+		if(pc_status != true)
+		{
+			oldmap1 = Map();
+			oldmap1.put("id",ele.get("id"));
+			oldsubform.add(oldmap1);
+		}
+		else
+		{
+			oldmap = Map();
+			oldmap.put("id",ele.get("id"));
+			oldmap.put("PC",false);
+			oldsubform.add(oldmap);
+		}
+	}
+	else
+	{
+		oldmap3 = Map();
+		oldmap3.put("id",ele.get("id"));
+		oldmap3.put("PC",true);
+		oldsubform.add(oldmap3);
+		flag = 1;
+	}
+}
+if(flag == 0)
+{
+	contact_details = zoho.crm.getRecordById("Contacts",contact_person_id.toLong());
+	fname = ifnull(contact_details.get("First_Name"),"");
+	lname = ifnull(contact_details.get("Last_Name"),"");
+	full_name = fname + lname;
+	contact_email = ifnull(contact_details.get("Email"),"");
+	contact_mobile = ifnull(contact_details.get("Mobile"),"");
+	contact_nationality = ifnull(contact_details.get("Nationality"),"");
+	subformmap2 = Map();
+	subformmap2.put("Contact_Name",contact_person_id.tolong());
+	subformmap2.put("Contact_Number",rp_bp_mobile);
+	subformmap2.put("Email_Address",rp_bp_email);
+	subformmap2.put("Nationality",contact_nationality);
+	subformmap2.put("PIC",false);
+	subformmap2.put("PC",true);
+	oldsubform.add(subformmap2);
+	flag = 1;
+}
+parammap1 = Map();
+parammap1.put("Contacts_Roles",oldsubform);
+update = zoho.crm.updateRecord("Accounts",account_id.toLong(),parammap1);
+updatepc = zoho.crm.updateRecord("Accounts",account_id.toLong(),{"Primary_Contact":contact_person_id.tolong()});
+updatepcname = zoho.crm.updateRecord("Accounts",account_id.toLong(),{"Primary_Contact_Name":full_name});
+updatepcemail = zoho.crm.updateRecord("Accounts",account_id.toLong(),{"PC_Email":rp_bp_email});
+////////////------------------------------------------------------------------------------/////////////////////////////////
+account_details = zoho.crm.getRecordById("Accounts",account_id);
+account_name = account_details.get("Account_Name");
+contact_roles = ifnull(account_details.get("Contacts_Roles"),"");
+for each  rec in contact_roles
+{
+	subformlist = List();
+	contactId = ifnull(rec.get("Contact_Name").get("id").toLong(),"");
+	account_contact_role_contact_email = rec.get("Email_Address");
+	contactmobile = rec.get("Contact_Number");
+	contactPIC = rec.get("PIC");
+	contactPC = rec.get("PC");
+	contactShareholder = rec.get("Shareholder");
+	// 	info subformlist;
+	contact_details = zoho.crm.getRecordById("Contacts",contactId.toLong());
+	contact_email = contact_details.get("Email");
+	subform_primary_accounts = contact_details.get("Primary_Accounts");
+	//The flag is just a trigger for a condition, if flag is 1 meaning the account is already added inside the Contacts Contact Roles subform
+	info "Size: " + subform_primary_accounts.size();
+	if(subform_primary_accounts.size() > 0)
+	{
+		flag = 0;
+		for each  subform_primary_account in subform_primary_accounts
+		{
+			if(subform_primary_account.get("Account_Name").get("name") == account_name)
+			{
+				info "First: " + subform_primary_account.get("Account_Name").get("name");
+				info "first acct name: " + account_name;
+				info "PIC:" + contactPIC;
+				info "PC:" + contactPC;
+				sub_formmap1 = Map();
+				sub_formmap1.put("Account_Name",account_id);
+				sub_formmap1.put("Contact_Number_1",ifnull(account_details.get("Contact_Number"),""));
+				sub_formmap1.put("PC_Email",ifnull(account_details.get("PC_Email"),""));
+				sub_formmap1.put("PIC",contactPIC);
+				sub_formmap1.put("PC",contactPC);
+				sub_formmap1.put("Shareholder",contactShareholder);
+				if(subform_primary_account.get("Hierarchy") == "Main")
+				{
+					info "Account Contact Role Email: " + account_contact_role_contact_email;
+					info "Contact Email: " + contact_email;
+					sub_formmap1.put("Hierarchy","Main");
+				}
+				else
+				{
+					sub_formmap1.put("Hierarchy","Others");
+				}
+				subformlist.add(sub_formmap1);
+				flag = 1;
+			}
+			else
+			{
+				info "None";
+				sub_formmap2 = Map();
+				sub_formmap2.put("id",subform_primary_account.get("id"));
+				subformlist.add(sub_formmap2);
+			}
+		}
+		if(flag == 0)
+		{
+			sub_formmap5 = Map();
+			sub_formmap5.put("Account_Name",account_id);
+			sub_formmap5.put("Contact_Number_1",contactmobile);
+			sub_formmap5.put("PC_Email",account_contact_role_contact_email);
+			sub_formmap5.put("PIC",contactPIC);
+			sub_formmap5.put("PC",contactPC);
+			sub_formmap5.put("Shareholder",contactShareholder);
+			sub_formmap5.put("Hierarchy","Others");
+			subformlist.add(sub_formmap5);
+		}
+	}
+	else
+	{
+		sub_formmap4 = Map();
+		sub_formmap4.put("Account_Name",account_id);
+		sub_formmap4.put("Contact_Number_1",contactmobile);
+		sub_formmap4.put("PC_Email",account_contact_role_contact_email);
+		sub_formmap4.put("PIC",contactPIC);
+		sub_formmap4.put("PC",contactPC);
+		sub_formmap4.put("Shareholder",contactShareholder);
+		sub_formmap4.put("Hierarchy","Others");
+		subformlist.add(sub_formmap4);
+	}
+	parammap = Map();
+	parammap.put("Primary_Accounts",subformlist);
+	update = zoho.crm.updateRecord("Contacts",contactId.toLong(),parammap);
+	info "Res: " + update;
+}
