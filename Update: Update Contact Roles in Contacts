@@ -152,10 +152,10 @@ for each  contact_subform_Primary_Account in contact_subform_Primary_Accounts
 		contactmap.put("Mobile",contact_number);
 	}
 	update_subform_status = zoho.crm.updateRecord("Contacts",contact_id,contactmap);
-	info update_subform_status;
+	info "Main Contacts: " +update_subform_status;
 }
 //Update Contacts Contact Roles
 cmap_final = Map();
 cmap_final.put("Primary_Accounts",subform_contact_list);
 update_subform_status2 = zoho.crm.updateRecord("Contacts",contact_id,cmap_final,{"trigger":{"workflow"}});
-info "Contacts: " + update_subform_status2;
+info "Contacts Contact Roles: " + update_subform_status2;
