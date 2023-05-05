@@ -46,11 +46,20 @@ for each  contact_subform_Primary_Account in contact_subform_Primary_Accounts
 					{
 						sub_formmap1.put("PC",false);
 						info "PC 1";
+						//Back to Contact Map 1
+						cmap1 = Map();
+						cmap1.put("id",contact_subform_Primary_Account.getJson("id"));
+						cmap1.put("PC",false);
+						subform_contact_list.add(cmap1);
 					}
 					else
 					{
 						sub_formmap1.put("PC",pc);
 						info "PC 2";
+						//Back to Contact Map 2
+						cmap2 = Map();
+						cmap2.put("id",contact_subform_Primary_Account.getJson("id"));
+						subform_contact_list.add(cmap2);
 					}
 					sub_formmap1.put("PIC",pic);
 					sub_formmap1.put("Shareholder",shareholder);
@@ -91,11 +100,20 @@ for each  contact_subform_Primary_Account in contact_subform_Primary_Accounts
 			{
 				sub_formmap4.put("PC",false);
 				info "PC 1 - Flag 0";
+				//Back to Contact Map 3
+				cmap3 = Map();
+				cmap3.put("id",contact_subform_Primary_Account.getJson("id"));
+				cmap3.put("PC",false);
+				subform_contact_list.add(cmap3);
 			}
 			else
 			{
 				sub_formmap4.put("PC",pc);
 				info "PC 2 - Flag 0";
+				//Back to Contact Map 2
+				cmap4 = Map();
+				cmap4.put("id",contact_subform_Primary_Account.getJson("id"));
+				subform_contact_list.add(cmap4);
 			}
 			sub_formmap4.put("PIC",pic);
 			sub_formmap4.put("Shareholder",shareholder);
@@ -136,3 +154,8 @@ for each  contact_subform_Primary_Account in contact_subform_Primary_Accounts
 	update_subform_status = zoho.crm.updateRecord("Contacts",contact_id,contactmap);
 	info update_subform_status;
 }
+//Update Contacts Contact Roles
+cmap_final = Map();
+cmap_final.put("Primary_Accounts",subform_contact_list);
+update_subform_status2 = zoho.crm.updateRecord("Contacts",contact_id,cmap_final,{"trigger":{"workflow"}});
+info "Contacts: " + update_subform_status2;
