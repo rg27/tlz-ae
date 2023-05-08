@@ -53,6 +53,7 @@ for each  contact_subform_Primary_Account in contact_subform_Primary_Accounts
 						cmap1.put("id",contact_subform_Primary_Account.getJson("id"));
 						cmap1.put("PC",false);
 						subform_contact_list.add(cmap1);
+						info "CMAP -1:" + cmap1;
 					}
 					else
 					{
