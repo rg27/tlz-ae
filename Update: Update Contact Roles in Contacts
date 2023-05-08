@@ -7,12 +7,13 @@ contact_subform_Primary_Accounts = contact_details.get("Primary_Accounts");
 subform_contact_list = List();
 for each  contact_subform_Primary_Account in contact_subform_Primary_Accounts
 {
+	existingPC = false;
 	subformlist = List();
 	acct_name = ifnull(contact_subform_Primary_Account.get("Account_Name").get("name"),"");
 	contact_number = ifnull(contact_subform_Primary_Account.get("Contact_Number_1"),"");
 	email_add = ifnull(contact_subform_Primary_Account.get("PC_Email"),"");
 	pc = ifnull(contact_subform_Primary_Account.get("PC"),"");
-	info pc;
+	info "Contact module -  Contact Roles: " + pc;
 	pic = ifnull(contact_subform_Primary_Account.get("PIC"),"");
 	shareholder = ifnull(contact_subform_Primary_Account.get("Shareholder"),"");
 	account_id = ifnull(contact_subform_Primary_Account.get("Account_Name").get("id"),"");
@@ -40,12 +41,13 @@ for each  contact_subform_Primary_Account in contact_subform_Primary_Accounts
 			{
 				if(existingPC == true)
 				{
+					info "Existing PC:" + existingPC;
 					sub_formmap1 = Map();
 					sub_formmap1.put("Contact_Name",contact_id);
 					if(contact_role_pc_id != contact_id)
 					{
 						sub_formmap1.put("PC",false);
-						info "PC 1";
+						info "PC ---- 1";
 						//Back to Contact Map 1
 						cmap1 = Map();
 						cmap1.put("id",contact_subform_Primary_Account.getJson("id"));
@@ -81,6 +83,10 @@ for each  contact_subform_Primary_Account in contact_subform_Primary_Accounts
 					sub_formmap1.put("Nationality",nationality);
 					subformlist.add(sub_formmap1);
 					flag = 1;
+					//Back to Contact Map 3
+					cmap5 = Map();
+					cmap5.put("id",contact_subform_Primary_Account.getJson("id"));
+					subform_contact_list.add(cmap5);
 				}
 			}
 			//The Contact is not available in Accounts Contacts Roles, remain the other values as the loop continue
@@ -96,7 +102,7 @@ for each  contact_subform_Primary_Account in contact_subform_Primary_Accounts
 		{
 			sub_formmap4 = Map();
 			sub_formmap4.put("Contact_Name",contact_id);
-			if(contact_role_pc_id != contact_id)
+			if(contact_role_pc_id != contact_id && existingPC == true)
 			{
 				sub_formmap4.put("PC",false);
 				info "PC 1 - Flag 0";
@@ -152,7 +158,7 @@ for each  contact_subform_Primary_Account in contact_subform_Primary_Accounts
 		contactmap.put("Mobile",contact_number);
 	}
 	update_subform_status = zoho.crm.updateRecord("Contacts",contact_id,contactmap);
-	info "Main Contacts: " +update_subform_status;
+	info "Main Contacts: " + update_subform_status;
 }
 //Update Contacts Contact Roles
 cmap_final = Map();
