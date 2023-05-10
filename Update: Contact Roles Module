@@ -123,7 +123,6 @@ for each  rec in contact_roles
 				sub_formmap1.put("PIC",contactPIC);
 				sub_formmap1.put("PC",contactPC);
 				sub_formmap1.put("Shareholder",contactShareholder);
-				sub_formmap1.put("Hierarchy","Others");
 				subformlist.add(sub_formmap1);
 				flag = 1;
 			}
