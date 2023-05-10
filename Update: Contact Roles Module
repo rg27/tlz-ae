@@ -123,16 +123,7 @@ for each  rec in contact_roles
 				sub_formmap1.put("PIC",contactPIC);
 				sub_formmap1.put("PC",contactPC);
 				sub_formmap1.put("Shareholder",contactShareholder);
-				if(subform_primary_account.get("Hierarchy") == "Main")
-				{
-					info "Account Contact Role Email: " + account_contact_role_contact_email;
-					info "Contact Email: " + contact_email;
-					sub_formmap1.put("Hierarchy","Main");
-				}
-				else
-				{
-					sub_formmap1.put("Hierarchy","Others");
-				}
+				sub_formmap1.put("Hierarchy","Others");
 				subformlist.add(sub_formmap1);
 				flag = 1;
 			}
@@ -161,7 +152,6 @@ for each  rec in contact_roles
 			sub_formmap5.put("PIC",contactPIC);
 			sub_formmap5.put("PC",contactPC);
 			sub_formmap5.put("Shareholder",contactShareholder);
-			sub_formmap5.put("Hierarchy","Others");
 			subformlist.add(sub_formmap5);
 		}
 	}
@@ -182,7 +172,6 @@ for each  rec in contact_roles
 		sub_formmap4.put("PIC",contactPIC);
 		sub_formmap4.put("PC",contactPC);
 		sub_formmap4.put("Shareholder",contactShareholder);
-		sub_formmap4.put("Hierarchy","Others");
 		subformlist.add(sub_formmap4);
 	}
 	parammap = Map();
