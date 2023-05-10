@@ -28,9 +28,9 @@ if(contact_partner == false)
 		}
 	}
 	//info subformlist;
-	parammap = Map();
-	parammap.put("Contacts_Roles",subformlist);
-	update = zoho.crm.updateRecord("Accounts",account_id.toLong(),parammap);
+	parammap2 = Map();
+	parammap2.put("Contacts_Roles",subformlist);
+	update = zoho.crm.updateRecord("Accounts",account_id.toLong(),parammap2);
 	info update;
 	accttype = "Prospect";
 	trn1 = '000000000000000';
@@ -132,13 +132,11 @@ for each  rec in contact_roles
 	subformmap.put("Shareholder",contactShareholder);
 	if(contactPIC == true)
 	{
-		subformmap.put("Hierarchy","Main");
 		subformmap.put("Contact_Number_1",contactmobile);
 		subformmap.put("PC_Email",contactemail);
 	}
 	else
 	{
-		subformmap.put("Hierarchy","Others");
 		subformmap.put("Contact_Number_1",rp_bp_mobile);
 		subformmap.put("PC_Email",contactemail);
 	}
