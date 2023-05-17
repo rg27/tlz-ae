@@ -6,68 +6,78 @@ for each  accountIdstr in accountIdsList
 	for each  accounts_subform in accounts_subforms
 	{
 		subformlist = List();
-		contact_id = ifnull(accounts_subform.get("Contact_Name").get("id"),"");
-		info "Contact ID: " + contact_id;
-		contact_details = zoho.crm.getRecordById("Contacts",contact_id.toLong());
-		contacts_subforms = ifnull(contact_details.get("Primary_Accounts"),"");
-		if(contacts_subforms.size() > 0)
+		pc_value = ifnull(accounts_subform.get("PC"),"");
+		pic_value = ifnull(accounts_subform.get("PIC"),"");
+		shareholder_value = ifnull(accounts_subform.get("Shareholder"),"");
+		if(pc_value == true || pic_value == true || shareholder_value == true)
 		{
-			flag = 0;
-			for each  contacts_subform in contacts_subforms
+			contact_id = ifnull(accounts_subform.get("Contact_Name").get("id"),"");
+			info "Contact ID: " + contact_id;
+			contact_details = zoho.crm.getRecordById("Contacts",contact_id.toLong());
+			contacts_subforms = ifnull(contact_details.get("Primary_Accounts"),"");
+			if(contacts_subforms.size() > 0)
 			{
-				if(accountIdstr == ifnull(contacts_subform.get("Account_Name").get("id"),""))
+				flag = 0;
+				for each  contacts_subform in contacts_subforms
 				{
-					info "cmap 1";
-					cmap1 = Map();
-					// 					cmap1.put("id",contacts_subform.get("id"));
-					cmap1.put("Account_Name",accountIdstr);
-					cmap1.put("PC_Email",ifnull(accounts_subform.get("Email_Address"),""));
-					cmap1.put("Contact_Number_1",ifnull(accounts_subform.get("Contact_Number"),""));
-					cmap1.put("PIC",ifnull(accounts_subform.get("PIC"),""));
-					cmap1.put("PC",ifnull(accounts_subform.get("PC"),""));
-					cmap1.put("Shareholder",ifnull(accounts_subform.get("Shareholder"),""));
-					flag = 1;
-					subformlist.add(cmap1);
+					if(accountIdstr == ifnull(contacts_subform.get("Account_Name").get("id"),""))
+					{
+						info "cmap 1";
+						cmap1 = Map();
+						cmap1.put("Account_Name",accountIdstr);
+						cmap1.put("PC_Email",ifnull(accounts_subform.get("Email_Address"),""));
+						cmap1.put("Contact_Number_1",ifnull(accounts_subform.get("Contact_Number"),""));
+						cmap1.put("PIC",ifnull(accounts_subform.get("PIC"),""));
+						cmap1.put("PC",ifnull(accounts_subform.get("PC"),""));
+						cmap1.put("Shareholder",ifnull(accounts_subform.get("Shareholder"),""));
+						flag = 1;
+						subformlist.add(cmap1);
+					}
+					else
+					{
+						info "cmap 2";
+						cmap2 = Map();
+						cmap2.put("id",contacts_subform.get("id"));
+						subformlist.add(cmap2);
+					}
 				}
-				else
+				if(flag == 0)
 				{
-					info "cmap 2";
-					cmap2 = Map();
-					cmap2.put("id",contacts_subform.get("id"));
-					subformlist.add(cmap2);
+					info "flag 0";
+					info "Cmap 3";
+					cmap3 = Map();
+					cmap3.put("Account_Name",accountIdstr);
+					cmap3.put("PC_Email",ifnull(accounts_subform.get("Email_Address"),""));
+					cmap3.put("Contact_Number_1",ifnull(accounts_subform.get("Contact_Number"),""));
+					cmap3.put("PIC",ifnull(accounts_subform.get("PIC"),""));
+					cmap3.put("PC",ifnull(accounts_subform.get("PC"),""));
+					cmap3.put("Shareholder",ifnull(accounts_subform.get("Shareholder"),""));
+					subformlist.add(cmap3);
 				}
 			}
-			if(flag == 0)
+			else
 			{
-				info "flag 0";
-				info "Cmap 3";
-				cmap3 = Map();
-				cmap3.put("Account_Name",accountIdstr);
-				cmap3.put("PC_Email",ifnull(accounts_subform.get("Email_Address"),""));
-				cmap3.put("Contact_Number_1",ifnull(accounts_subform.get("Contact_Number"),""));
-				cmap3.put("PIC",ifnull(accounts_subform.get("PIC"),""));
-				cmap3.put("PC",ifnull(accounts_subform.get("PC"),""));
-				cmap3.put("Shareholder",ifnull(accounts_subform.get("Shareholder"),""));
-				subformlist.add(cmap3);
+				info "Cmap 4";
+				cmap4 = Map();
+				cmap4.put("Account_Name",accountIdstr);
+				cmap4.put("PC_Email",ifnull(accounts_subform.get("Email_Address"),""));
+				cmap4.put("Contact_Number_1",ifnull(accounts_subform.get("Contact_Number"),""));
+				cmap4.put("PIC",ifnull(accounts_subform.get("PIC"),""));
+				cmap4.put("PC",ifnull(accounts_subform.get("PC"),""));
+				cmap4.put("Shareholder",ifnull(accounts_subform.get("Shareholder"),""));
+				subformlist.add(cmap4);
 			}
+			info "Subform List: " + subformlist;
+			finalmap = Map();
+			finalmap.put("Primary_Accounts",subformlist);
+			finalmap.put("Contact_Roles_Status","True");
+			res = zoho.crm.updateRecord("Contacts",contact_id,finalmap);
+			info res;
 		}
 		else
 		{
-			info "Cmap 4";
-			cmap4 = Map();
-			cmap4.put("Account_Name",accountIdstr);
-			cmap4.put("PC_Email",ifnull(accounts_subform.get("Email_Address"),""));
-			cmap4.put("Contact_Number_1",ifnull(accounts_subform.get("Contact_Number"),""));
-			cmap4.put("PIC",ifnull(accounts_subform.get("PIC"),""));
-			cmap4.put("PC",ifnull(accounts_subform.get("PC"),""));
-			cmap4.put("Shareholder",ifnull(accounts_subform.get("Shareholder"),""));
-			subformlist.add(cmap4);
+			//nothing
 		}
-		info "Subform List: " + subformlist;
-		finalmap = Map();
-		finalmap.put("Primary_Accounts",subformlist);
-		res = zoho.crm.updateRecord("Contacts",contact_id,finalmap);
-		info res;
 	}
 }
 return "Contact Roles Updated!!";
