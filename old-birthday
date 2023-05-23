@@ -1,0 +1,142 @@
+contact_details = zoho.crm.getRecordById("Contacts",contact_id);
+account_id = contact_details.get("Account_Name").get("id");
+account_details = zoho.crm.getRecordById("Accounts",account_id);
+tlz_employee = contact_details.get("Is_an_TLZ_Employee");
+account_type = account_details.get("Account_Type");
+parent_account = account_details.get("Parent_Account");
+unsubscibe_mailer = contact_details.get("Unsubscribe_Mailer");
+is_a_joker = contact_details.get("Never_send_an_email");
+email_opt = contact_details.get("Email_Opt_Out");
+contact_email = contact_details.get("Email");
+pc_email = account_details.get("PC_Email");
+contact_type = contact_details.get("Contact_Type");
+if(tlz_employee == false)
+{
+	if(account_type != null && account_type != "Transferred to Competitor" && account_type != "Prospect" && account_type != "Transferred to Authority" && account_type != "Referral Partner" && account_type != "TLZ Company")
+	{
+		if(parent_account == null || parent_account == " ")
+		{
+			if(unsubscibe_mailer == false && is_a_joker == false && email_opt == false)
+			{
+				//
+				//
+				//Get URL of email
+				// 				email_url = "https://www.zohoapis.com/crm/v3/settings/email_templates/" + "3769920000087250143";
+				a = Map();
+				a.put("email","info@tlz.ae");
+				a.put("user_name","TLZ");
+				info a;
+				b_list = list();
+				c = Map();
+				c.put("email",contact_email);
+				b_list.add(c);
+				emp = Map();
+				emp.put("id","3769920000087250143");
+				data1 = Map();
+				data1.put("subject","Happy Birthday from Trade License Zone!");
+				data1.put("mail_format","html");
+				data1.put("template",emp);
+				data1.put("from",a);
+				data1.put("to",b_list);
+				data1.put("org_email",true);
+				f = list();
+				f.add(data1);
+				final = Map();
+				final.put("data",f);
+				info final;
+				//
+				//
+				//Get Email Template
+				email_templates_response = invokeurl
+				[
+					url :"https://www.zohoapis.com/crm/v2.1/Contacts/" + contact_id + "/actions/send_mail"
+					type :POST
+					parameters:final.tostring()
+					connection:"send_email_all_modules"
+				];
+				info email_templates_response;
+				// info email_templates_response ;
+				// 				email_content = email_templates_response.get("email_templates").get(0).get("content");
+				// 				info email_content;
+				// 				email_content = email_content.replaceAll("\$\{!Contacts.First_Name\}",contact_details.get("First_Name"));
+				// 				email_content = email_content.replaceAll("\$\{!Contacts.Last_Name\}",contact_details.get("Last_Name"));
+				// 				//
+				// 				//
+				// 				// Send Email Template
+				// 				sendmail
+				// 				[
+				// 					from :"info@tlz.ae"
+				// 					to :contact_email
+				// 					subject :"Happy Birthday from Trade License Zone!"
+				// 					message :email_content
+				// 				]
+			}
+		}
+		else
+		{
+			a = Map();
+			a.put("email","info@tlz.ae");
+			a.put("user_name","TLZ");
+			info a;
+			b_list = list();
+			c = Map();
+			c.put("email",pc_email);
+			b_list.add(c);
+			emp = Map();
+			emp.put("id","3769920000087250143");
+			data1 = Map();
+			data1.put("subject","Happy Birthday from Trade License Zone!");
+			data1.put("mail_format","html");
+			data1.put("template",emp);
+			data1.put("from",a);
+			data1.put("to",b_list);
+			data1.put("org_email",true);
+			f = list();
+			f.add(data1);
+			final = Map();
+			final.put("data",f);
+			info final;
+			//
+			//
+			//Get Email Template
+			email_templates_response = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v2.1/Contacts/" + contact_id + "/actions/send_mail"
+				type :POST
+				parameters:final.tostring()
+				connection:"send_email_all_modules"
+			];
+			info email_templates_response;
+			//Old Version
+			// 			email_url = "https://www.zohoapis.com/crm/v3/settings/email_templates/" + "3769920000087250143";
+			//
+			//
+			//Get Email Template
+			// 			email_templates_response = invokeurl
+			// 			[
+			// 				url :email_url
+			// 				type :GET
+			// 				connection:"email_template"
+			// 			];
+			// 			info email_templates_response;
+			// 			email_content = email_templates_response.get("email_templates").get(0).get("content");
+			// 			info email_content;
+			// 			email_content = email_content.replaceAll("\$\{!Contacts.First_Name\}",contact_details.get("First_Name"));
+			// 			email_content = email_content.replaceAll("\$\{!Contacts.Last_Name\}",contact_details.get("Last_Name"));
+			//
+			//
+			// Send Email Template
+			// 			sendmail
+			// 			[
+			// 				from :"info@tlz.ae"
+			// 				to :pc_email
+			// 				subject :"Happy Birthday from Trade License Zone!"
+			// 				message :email_content
+			// 			]
+		}
+	}
+	else
+	{
+		info account_type;
+	}
+}
