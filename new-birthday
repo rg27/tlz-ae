@@ -2,139 +2,399 @@ contact_details = zoho.crm.getRecordById("Contacts",contact_id);
 account_id = contact_details.get("Account_Name").get("id");
 contacts_subform = ifnull(contact_details.get("Primary_Accounts"),"");
 contact_email = contact_details.get("Email");
+unsubscibe_mailer = contact_details.get("Unsubscribe_Mailer");
+is_a_joker = contact_details.get("Never_send_an_email");
+email_opt = contact_details.get("Email_Opt_Out");
+flag = 0;
+info "Size: " + contacts_subform.size();
 for each  contact_subform in contacts_subform
 {
-	if(contact_subform.get("PIC") == true || contact_subform.get("Shareholder") == true)
+	if(contacts_subform.size() >= 1)
 	{
-		account_id = contact_details.get("Account_Name").get("id");
-		account_details = zoho.crm.getRecordById("Accounts",account_id.toLong());
-		account_type = ifnull(account_details.get("Account_Type"),"");
-		parent_account = account_details.get("Parent_Account");
-		pc_email = account_details.get("PC_Email");
-		prospects_related = zoho.crm.getRelatedRecords("Deals","Accounts",account_id.toLong());
-		for each  prospect_related in prospects_related
+		if(contact_subform.get("PC") == true || contact_subform.get("Shareholder") == true)
 		{
-			if(prospect_related.get("Type") == "New Trade License" && prospect_related.get("Stage") == "Closed Won")
+			account_id = contact_details.get("Account_Name").get("id");
+			account_details = zoho.crm.getRecordById("Accounts",account_id.toLong());
+			account_type = ifnull(account_details.get("Account_Type"),"");
+			parent_account = account_details.get("Parent_Account");
+			contact_partner = ifnull(account_details.get("Contact_Partner_Only"),"");
+			pc_email = account_details.get("PC_Email");
+			prospects_related = zoho.crm.getRelatedRecords("Deals","Accounts",account_id.toLong());
+			for each  prospect_related in prospects_related
 			{
-				info "Closed Won";
-				prospect_email = prospect_related.get("Owner").get("email");
-				// 				prospect_email = "oliver@tlz.ae";
-				users_response = zoho.crm.searchRecords("users","(email:equals:" + prospect_email + ")");
-				if(users_response.getjson("users").getjson("status") == "active")
+				if(prospect_related.get("Type") == "New Trade License" && prospect_related.get("Stage") == "Closed Won")
 				{
-					prospect_owner_email = prospect_related.getjson("Owner").getjson("email");
-					prospect_owner_status = "valid";
+					prospect_status = "valid";
+					info "Closed Won";
+					prospect_email = prospect_related.get("Owner").get("email");
+					users_response = zoho.crm.searchRecords("users","(email:equals:" + prospect_email + ")");
+					if(users_response.getjson("users").getjson("status") == "active")
+					{
+						prospect_owner_email = prospect_related.getjson("Owner").getjson("email");
+						prospect_owner_status = "valid";
+						info "existing - valid";
+					}
+					else
+					{
+						prospect_owner_status = "invalid";
+					}
 				}
 				else
 				{
-					prospect_owner_status = "invalid";
+					info "Prospect Status is possible invalid";
+					prospect_status = "invalid";
+				}
+			}
+			if(account_type != null && account_type != "Transferred to Competitor" && account_type != "Prospect" && account_type != "Transferred to Authority" && account_type != "Referral Partner" && account_type != "TLZ Company" && prospect_status == "valid")
+			{
+				if(contact_partner == null || contact_partner == " " || contact_partner == false)
+				{
+					if(unsubscibe_mailer == false && is_a_joker == false && email_opt == false)
+					{
+						//Get URL of email
+						frommap = Map();
+						frommap.put("email","info@tlz.ae");
+						frommap.put("user_name","TLZ");
+						info frommap;
+						receiverList = list();
+						receivermap = Map();
+						receivermap.put("email",contact_email);
+						receiverList.add(receivermap);
+						carboncopymap = Map();
+						carboncopymap.put("email",ifnull(prospect_owner_email,""));
+						carboncopylist = List();
+						carboncopylist.add(carboncopymap);
+						tempplatemap = Map();
+						tempplatemap.put("id","3769920000087250143");
+						data1 = Map();
+						data1.put("subject","Happy Birthday from Trade License Zone!");
+						data1.put("mail_format","html");
+						data1.put("template",tempplatemap);
+						data1.put("from",frommap);
+						data1.put("to",receiverList);
+						if(prospect_owner_status == "valid")
+						{
+							data1.put("cc",carboncopylist);
+						}
+						else
+						{
+							//nothing
+						}
+						data1.put("org_email",true);
+						finalList = list();
+						finalList.add(data1);
+						finalmap = Map();
+						finalmap.put("data",finalList);
+						//Get Email Template
+						email_templates_response = invokeurl
+						[
+							url :"https://www.zohoapis.com/crm/v2.1/Contacts/" + contact_id + "/actions/send_mail"
+							type :POST
+							parameters:finalmap.tostring()
+							connection:"send_email_all_modules"
+						];
+						info email_templates_response;
+						flag = 1;
+						info "Existing - Contact Partner is false";
+						break;
+					}
+				}
+				else
+				{
+					if(unsubscibe_mailer == false && is_a_joker == false && email_opt == false)
+					{
+						frommap2 = Map();
+						frommap2.put("email","info@tlz.ae");
+						frommap2.put("user_name","TLZ");
+						info frommap2;
+						carboncopymap2 = Map();
+						carboncopymap2.put("email",ifnull(prospect_owner_email,""));
+						carboncopylist2 = List();
+						carboncopylist2.add(carboncopymap2);
+						receiverList2 = list();
+						receivermap2 = Map();
+						receivermap2.put("email",pc_email);
+						receiverList2.add(receivermap2);
+						templatemap2 = Map();
+						templatemap2.put("id","3769920000087250143");
+						data2 = Map();
+						data2.put("subject","Happy Birthday from Trade License Zone!");
+						data2.put("mail_format","html");
+						data2.put("template",templatemap2);
+						data2.put("from",frommap2);
+						data2.put("to",receiverList2);
+						if(prospect_owner_status == "valid")
+						{
+							data2.put("cc",carboncopylist2);
+						}
+						else
+						{
+							//nothing
+						}
+						data2.put("org_email",true);
+						finalList2 = list();
+						finalList2.add(data2);
+						finalmap2 = Map();
+						finalmap2.put("data",finalList2);
+						info finalmap2;
+						//Get Email Template
+						email_templates_response = invokeurl
+						[
+							url :"https://www.zohoapis.com/crm/v2.1/Contacts/" + contact_id + "/actions/send_mail"
+							type :POST
+							parameters:finalmap2.tostring()
+							connection:"send_email_all_modules"
+						];
+						info email_templates_response;
+						flag = 1;
+						info "Existing - Contact Partner is True";
+						break;
+					}
 				}
 			}
 			else
 			{
-				info "nothing closed";
+				info "nothing";
 			}
 		}
-		if(account_type != null && account_type != "Transferred to Competitor" && account_type != "Prospect" && account_type != "Transferred to Authority" && account_type != "Referral Partner" && account_type != "TLZ Company")
+	}
+	if(contacts_subform.size() == 0 || contacts_subform.size() == null)
+	{
+		if(unsubscibe_mailer == false && is_a_joker == false && email_opt == false)
 		{
-			if(parent_account == null || parent_account == " ")
-			{
-				//Get URL of email
-				frommap = Map();
-				frommap.put("email","info@tlz.ae");
-				frommap.put("user_name","TLZ");
-				info frommap;
-				receiverList = list();
-				receivermap = Map();
-				receivermap.put("email",contact_email);
-				receiverList.add(receivermap);
-				carboncopymap = Map();
-				carboncopymap.put("email",ifnull(prospect_owner_email,""));
-				carboncopylist = List();
-				carboncopylist.add(carboncopymap);
-				tempplatemap = Map();
-				tempplatemap.put("id","3769920000087250143");
-				data1 = Map();
-				data1.put("subject","Happy Birthday from Trade License Zone!");
-				data1.put("mail_format","html");
-				data1.put("template",tempplatemap);
-				data1.put("from",frommap);
-				data1.put("to",receiverList);
-				if(prospect_owner_status == "valid")
-				{
-					data1.put("cc",carboncopylist);
-				}
-				else
-				{
-					//nothing
-				}
-				data1.put("org_email",true);
-				finalList = list();
-				finalList.add(data1);
-				finalmap = Map();
-				finalmap.put("data",finalList);
-				//Get Email Template
-				email_templates_response = invokeurl
-				[
-					url :"https://www.zohoapis.com/crm/v2.1/Contacts/" + contact_id + "/actions/send_mail"
-					type :POST
-					parameters:finalmap.tostring()
-					connection:"send_email_all_modules"
-				];
-				info email_templates_response;
-				break;
-			}
-			else
-			{
-				frommap2 = Map();
-				frommap2.put("email","info@tlz.ae");
-				frommap2.put("user_name","TLZ");
-				info frommap2;
-				carboncopymap2 = Map();
-				carboncopymap2.put("email",ifnull(prospect_owner_email,""));
-				carboncopylist2 = List();
-				carboncopylist2.add(carboncopymap2);
-				receiverList2 = list();
-				receivermap2 = Map();
-				receivermap2.put("email",pc_email);
-				receiverList.add(receivermap2);
-				templatemap2 = Map();
-				templatemap2.put("id","3769920000087250143");
-				data2 = Map();
-				data2.put("subject","Happy Birthday from Trade License Zone!");
-				data2.put("mail_format","html");
-				data2.put("template",templatemap2);
-				data2.put("from",frommap2);
-				data2.put("to",receiverList2);
-				if(prospect_owner_status == "valid")
-				{
-					data2.put("cc",carboncopylist2);
-				}
-				else
-				{
-					//nothing
-				}
-				data2.put("org_email",true);
-				finalList2 = list();
-				finalList2.add(data2);
-				finalmap2 = Map();
-				finalmap2.put("data",finalList2);
-				info finalmap2;
-				//Get Email Template
-				email_templates_response = invokeurl
-				[
-					url :"https://www.zohoapis.com/crm/v2.1/Contacts/" + contact_id + "/actions/send_mail"
-					type :POST
-					parameters:finalmap2.tostring()
-					connection:"send_email_all_modules"
-				];
-				info email_templates_response;
-				break;
-			}
-		}
-		else
-		{
-			info "nothing";
+			frommap = Map();
+			frommap.put("email","info@tlz.ae");
+			frommap.put("user_name","TLZ");
+			info frommap;
+			receiverList = list();
+			receivermap = Map();
+			receivermap.put("email",contact_email);
+			receiverList.add(receivermap);
+			tempplatemap = Map();
+			tempplatemap.put("id","3769920000087250143");
+			data1 = Map();
+			data1.put("subject","Happy Birthday from Trade License Zone!");
+			data1.put("mail_format","html");
+			data1.put("template",tempplatemap);
+			data1.put("from",frommap);
+			data1.put("to",receiverList);
+			data1.put("org_email",true);
+			finalList = list();
+			finalList.add(data1);
+			finalmap = Map();
+			finalmap.put("data",finalList);
+			//Get Email Template
+			email_templates_response = invokeurl
+			[
+				url :"https://www.zohoapis.com/crm/v2.1/Contacts/" + contact_id + "/actions/send_mail"
+				type :POST
+				parameters:finalmap.tostring()
+				connection:"send_email_all_modules"
+			];
+			info email_templates_response;
+			flag = 1;
+			info "No Contact Roles";
+			break;
 		}
 	}
 }
+if(flag == 0 && prospect_status != "invalid")
+{
+	account_id = contact_details.get("Account_Name").get("id");
+	account_details = zoho.crm.getRecordById("Accounts",account_id.toLong());
+	account_type = ifnull(account_details.get("Account_Type"),"");
+	parent_account = account_details.get("Parent_Account");
+	contact_partner = ifnull(account_details.get("Contact_Partner_Only"),"");
+	pc_email = account_details.get("PC_Email");
+	prospects_related = zoho.crm.getRelatedRecords("Deals","Accounts",account_id.toLong());
+	for each  prospect_related in prospects_related
+	{
+		if(prospect_related.get("Type") == "New Trade License" && prospect_related.get("Stage") == "Closed Won")
+		{
+			info "Closed Won";
+			prospect_email = prospect_related.get("Owner").get("email");
+			users_response = zoho.crm.searchRecords("users","(email:equals:" + prospect_email + ")");
+			prospect_status2 = "valid";
+		}
+		else
+		{
+			prospect_status2 = "invalid";
+			info "invalid - no pic/shareholder - stage is possible not won";
+		}
+	}
+	if(unsubscibe_mailer == false && is_a_joker == false && email_opt == false && prospect_status2 == "valid")
+	{
+		frommap = Map();
+		frommap.put("email","info@tlz.ae");
+		frommap.put("user_name","TLZ");
+		info frommap;
+		receiverList = list();
+		receivermap = Map();
+		receivermap.put("email",contact_email);
+		receiverList.add(receivermap);
+		tempplatemap = Map();
+		tempplatemap.put("id","3769920000087250143");
+		data1 = Map();
+		data1.put("subject","Happy Birthday from Trade License Zone!");
+		data1.put("mail_format","html");
+		data1.put("template",tempplatemap);
+		data1.put("from",frommap);
+		data1.put("to",receiverList);
+		data1.put("org_email",true);
+		finalList = list();
+		finalList.add(data1);
+		finalmap = Map();
+		finalmap.put("data",finalList);
+		//Get Email Template
+		email_templates_response = invokeurl
+		[
+			url :"https://www.zohoapis.com/crm/v2.1/Contacts/" + contact_id + "/actions/send_mail"
+			type :POST
+			parameters:finalmap.tostring()
+			connection:"send_email_all_modules"
+		];
+		info email_templates_response;
+		flag = 1;
+		info "Mulitple Contacts Roles but no PC or Shareholder";
+	}
+}
+// contact_details = zoho.crm.getRecordById("Contacts",contact_id);
+// account_id = contact_details.get("Account_Name").get("id");
+// contacts_subform = ifnull(contact_details.get("Primary_Accounts"),"");
+// contact_email = contact_details.get("Email");
+// for each  contact_subform in contacts_subform
+// {
+// 	if(contact_subform.get("PIC") == true || contact_subform.get("Shareholder") == true)
+// 	{
+// 		account_id = contact_details.get("Account_Name").get("id");
+// 		account_details = zoho.crm.getRecordById("Accounts",account_id.toLong());
+// 		account_type = ifnull(account_details.get("Account_Type"),"");
+// 		parent_account = account_details.get("Parent_Account");
+// 		pc_email = account_details.get("PC_Email");
+// 		prospects_related = zoho.crm.getRelatedRecords("Deals","Accounts",account_id.toLong());
+// 		for each  prospect_related in prospects_related
+// 		{
+// 			if(prospect_related.get("Type") == "New Trade License" && prospect_related.get("Stage") == "Closed Won")
+// 			{
+// 				info "Closed Won";
+// 				prospect_email = prospect_related.get("Owner").get("email");
+// 				// 				prospect_email = "oliver@tlz.ae";
+// 				users_response = zoho.crm.searchRecords("users","(email:equals:" + prospect_email + ")");
+// 				if(users_response.getjson("users").getjson("status") == "active")
+// 				{
+// 					prospect_owner_email = prospect_related.getjson("Owner").getjson("email");
+// 					prospect_owner_status = "valid";
+// 				}
+// 				else
+// 				{
+// 					prospect_owner_status = "invalid";
+// 				}
+// 			}
+// 			else
+// 			{
+// 				info "nothing closed";
+// 			}
+// 		}
+// 		if(account_type != null && account_type != "Transferred to Competitor" && account_type != "Prospect" && account_type != "Transferred to Authority" && account_type != "Referral Partner" && account_type != "TLZ Company")
+// 		{
+// 			if(parent_account == null || parent_account == " ")
+// 			{
+// 				//Get URL of email
+// 				frommap = Map();
+// 				frommap.put("email","info@tlz.ae");
+// 				frommap.put("user_name","TLZ");
+// 				info frommap;
+// 				receiverList = list();
+// 				receivermap = Map();
+// 				receivermap.put("email",contact_email);
+// 				receiverList.add(receivermap);
+// 				carboncopymap = Map();
+// 				carboncopymap.put("email",ifnull(prospect_owner_email,""));
+// 				carboncopylist = List();
+// 				carboncopylist.add(carboncopymap);
+// 				tempplatemap = Map();
+// 				tempplatemap.put("id","3769920000087250143");
+// 				data1 = Map();
+// 				data1.put("subject","Happy Birthday from Trade License Zone!");
+// 				data1.put("mail_format","html");
+// 				data1.put("template",tempplatemap);
+// 				data1.put("from",frommap);
+// 				data1.put("to",receiverList);
+// 				if(prospect_owner_status == "valid")
+// 				{
+// 					data1.put("cc",carboncopylist);
+// 				}
+// 				else
+// 				{
+// 					//nothing
+// 				}
+// 				data1.put("org_email",true);
+// 				finalList = list();
+// 				finalList.add(data1);
+// 				finalmap = Map();
+// 				finalmap.put("data",finalList);
+// 				//Get Email Template
+// 				email_templates_response = invokeurl
+// 				[
+// 					url :"https://www.zohoapis.com/crm/v2.1/Contacts/" + contact_id + "/actions/send_mail"
+// 					type :POST
+// 					parameters:finalmap.tostring()
+// 					connection:"send_email_all_modules"
+// 				];
+// 				info email_templates_response;
+// 				break;
+// 			}
+// 			else
+// 			{
+// 				frommap2 = Map();
+// 				frommap2.put("email","info@tlz.ae");
+// 				frommap2.put("user_name","TLZ");
+// 				info frommap2;
+// 				carboncopymap2 = Map();
+// 				carboncopymap2.put("email",ifnull(prospect_owner_email,""));
+// 				carboncopylist2 = List();
+// 				carboncopylist2.add(carboncopymap2);
+// 				receiverList2 = list();
+// 				receivermap2 = Map();
+// 				receivermap2.put("email",pc_email);
+// 				receiverList.add(receivermap2);
+// 				templatemap2 = Map();
+// 				templatemap2.put("id","3769920000087250143");
+// 				data2 = Map();
+// 				data2.put("subject","Happy Birthday from Trade License Zone!");
+// 				data2.put("mail_format","html");
+// 				data2.put("template",templatemap2);
+// 				data2.put("from",frommap2);
+// 				data2.put("to",receiverList2);
+// 				if(prospect_owner_status == "valid")
+// 				{
+// 					data2.put("cc",carboncopylist2);
+// 				}
+// 				else
+// 				{
+// 					//nothing
+// 				}
+// 				data2.put("org_email",true);
+// 				finalList2 = list();
+// 				finalList2.add(data2);
+// 				finalmap2 = Map();
+// 				finalmap2.put("data",finalList2);
+// 				info finalmap2;
+// 				//Get Email Template
+// 				email_templates_response = invokeurl
+// 				[
+// 					url :"https://www.zohoapis.com/crm/v2.1/Contacts/" + contact_id + "/actions/send_mail"
+// 					type :POST
+// 					parameters:finalmap2.tostring()
+// 					connection:"send_email_all_modules"
+// 				];
+// 				info email_templates_response;
+// 				break;
+// 			}
+// 		}
+// 		else
+// 		{
+// 			info "nothing";
+// 		}
+// 	}
+// }
