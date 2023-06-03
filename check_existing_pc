@@ -1,0 +1,38 @@
+main_contact_id = $Page.record_id;
+// log(main_contact_id);
+var subform = ZDK.Page.getField('Primary_Accounts');
+// log("subform: " + subform)
+if (subform != null) {
+    var existingSubformList = subform.getValue();
+    const existingSubformJSON = JSON.stringify(existingSubformList);
+
+    var contactObj = JSON.parse(existingSubformJSON);
+    // log("PC:" + empObj[1]);
+
+    for (var key of Object.keys(contactObj)) {
+        let pc = contactObj[key].PC;
+        log("Contact PC: " + pc);
+        if (pc == true) {
+            acct_id = contactObj[key].Account_Name.id;
+            acct_name = contactObj[key].Account_Name.name;
+            var accountDetails = ZDK.Apps.CRM.Accounts.fetchById(acct_id);
+            var account_subform = accountDetails.Contacts_Roles;
+            var account_contact_roles_json = JSON.stringify(account_subform);
+            var accountObj = JSON.parse(account_contact_roles_json);
+            for (var key of Object.keys(accountObj)) {
+                let account_pc = accountObj[key].PC;
+                // log("Account PC: " + account_pc);
+                if (account_pc == true) {
+                    contact_id = accountObj[key].Contact_Name.id;
+                    // log("Contact ID: " + contact_id);
+                    if (main_contact_id != contact_id) {
+                        ZDK.Client.showAlert('ERROR! ' + acct_name + ' has already an existing PC');
+                        // contact_contact_role_pc = contactObj[key].getField('PC');
+                        // contact_contact_role_pc.setValue("");
+                    }
+                }
+            }
+
+        }
+    }
+}
