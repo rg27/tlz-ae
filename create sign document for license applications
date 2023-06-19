@@ -12,6 +12,9 @@ for each  sign_field in sign_fields.getjson("field_types")
 	}
 }
 application_details = zoho.crm.getRecordById("Applications1",application_id);
+license_type = ifnull(application_details.get("License_Type"),"");
+info "License Type: " + license_type;
+account_name = application_details.get("Account_Name").get("name");
 terms_and_conditions = ifnull(application_details.get("Terms_and_Conditions"),"");
 filesList = list();
 for each  terms_and_condition in terms_and_conditions
@@ -26,244 +29,335 @@ for each  terms_and_condition in terms_and_conditions
 	filesList.add(download_response);
 }
 dataMap = Map();
-dataMap.put("requests",{"request_name":"Applications Form"});
+dataMap.put("requests",{"request_name":"Applications Form -" + account_name});
 requestMap = Map();
 requestMap.put("data",dataMap);
 created_document_response = zoho.sign.createDocument(filesList,requestMap,"sign_crm");
 // info "Created Document: " + created_document_response ;
-document_ids = created_document_response.getjson("requests").getjson("document_ids");
-// info document_ids;
-doc_1 = ifnull(document_ids.get(0).getjson("document_id"),"");
-doc_2 = ifnull(document_ids.get(1).getjson("document_id"),"");
-doc_3 = ifnull(document_ids.get(2).getjson("document_id"),"");
-doc_4 = ifnull(document_ids.get(3).getjson("document_id"),"");
 req_id = created_document_response.getjson("requests").getjson("request_id");
-// ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Create a map to store the details of the signature field
-//IFZA Terms and Conditions 0
-IFZATandCfieldsMap1 = Map();
-IFZATandCfieldsMap1.put("x_coord","30");
-IFZATandCfieldsMap1.put("y_coord","770");
-IFZATandCfieldsMap1.put("abs_height","20");
-IFZATandCfieldsMap1.put("abs_width","20");
-IFZATandCfieldsMap1.put("field_type_id",sign_field_type_id);
-IFZATandCfieldsMap1.put("field_category","image");
-IFZATandCfieldsMap1.put("field_label","Signature");
-IFZATandCfieldsMap1.put("is_mandatory","true");
-IFZATandCfieldsMap1.put("page_no","0");
-IFZATandCfieldsMap1.put("document_id",doc_1);
-IFZATandCfieldsMap1.put("field_name","Signature");
-IFZATandCfieldsMap1.put("field_type_name","Signature");
-//IFZA Terms and Conditions 1
-IFZATandCfieldsMap2 = Map();
-IFZATandCfieldsMap2.put("x_coord","20");
-IFZATandCfieldsMap2.put("y_coord","770");
-IFZATandCfieldsMap2.put("abs_height","20");
-IFZATandCfieldsMap2.put("abs_width","20");
-IFZATandCfieldsMap2.put("field_type_id",sign_field_type_id);
-IFZATandCfieldsMap2.put("field_category","image");
-IFZATandCfieldsMap2.put("field_label","Signature");
-IFZATandCfieldsMap2.put("is_mandatory","true");
-IFZATandCfieldsMap2.put("page_no","1");
-IFZATandCfieldsMap2.put("document_id",doc_1);
-IFZATandCfieldsMap2.put("field_name","Signature");
-IFZATandCfieldsMap2.put("field_type_name","Signature");
-//IFZA Terms and Conditions 2
-IFZATandCfieldsMap3 = Map();
-IFZATandCfieldsMap3.put("x_coord","20");
-IFZATandCfieldsMap3.put("y_coord","770");
-IFZATandCfieldsMap3.put("abs_height","20");
-IFZATandCfieldsMap3.put("abs_width","20");
-IFZATandCfieldsMap3.put("field_type_id",sign_field_type_id);
-IFZATandCfieldsMap3.put("field_category","image");
-IFZATandCfieldsMap3.put("field_label","Signature");
-IFZATandCfieldsMap3.put("is_mandatory","true");
-IFZATandCfieldsMap3.put("page_no","2");
-IFZATandCfieldsMap3.put("document_id",doc_1);
-IFZATandCfieldsMap3.put("field_name","Signature");
-IFZATandCfieldsMap3.put("field_type_name","Signature");
-//TLZ Terms and Conditions 0
-TLZTandCfieldsMap1 = Map();
-TLZTandCfieldsMap1.put("x_coord","520");
-TLZTandCfieldsMap1.put("y_coord","770");
-TLZTandCfieldsMap1.put("abs_height","20");
-TLZTandCfieldsMap1.put("abs_width","20");
-TLZTandCfieldsMap1.put("field_type_id",sign_field_type_id);
-TLZTandCfieldsMap1.put("field_category","image");
-TLZTandCfieldsMap1.put("field_label","Signature");
-TLZTandCfieldsMap1.put("is_mandatory","true");
-TLZTandCfieldsMap1.put("page_no","0");
-TLZTandCfieldsMap1.put("document_id",doc_2);
-TLZTandCfieldsMap1.put("field_name","Signature");
-TLZTandCfieldsMap1.put("field_type_name","Signature");
-//TLZ Terms and Conditions 1
-TLZTandCfieldsMap2 = Map();
-TLZTandCfieldsMap2.put("x_coord","520");
-TLZTandCfieldsMap2.put("y_coord","770");
-TLZTandCfieldsMap2.put("abs_height","20");
-TLZTandCfieldsMap2.put("abs_width","20");
-TLZTandCfieldsMap2.put("field_type_id",sign_field_type_id);
-TLZTandCfieldsMap2.put("field_category","image");
-TLZTandCfieldsMap2.put("field_label","Signature");
-TLZTandCfieldsMap2.put("is_mandatory","true");
-TLZTandCfieldsMap2.put("page_no","1");
-TLZTandCfieldsMap2.put("document_id",doc_2);
-TLZTandCfieldsMap2.put("field_name","Signature");
-TLZTandCfieldsMap2.put("field_type_name","Signature");
-//TLZ Terms and Conditions 2
-TLZTandCfieldsMap3 = Map();
-TLZTandCfieldsMap3.put("x_coord","520");
-TLZTandCfieldsMap3.put("y_coord","770");
-TLZTandCfieldsMap3.put("abs_height","20");
-TLZTandCfieldsMap3.put("abs_width","20");
-TLZTandCfieldsMap3.put("field_type_id",sign_field_type_id);
-TLZTandCfieldsMap3.put("field_category","image");
-TLZTandCfieldsMap3.put("field_label","Signature");
-TLZTandCfieldsMap3.put("is_mandatory","true");
-TLZTandCfieldsMap3.put("page_no","2");
-TLZTandCfieldsMap3.put("document_id",doc_2);
-TLZTandCfieldsMap3.put("field_name","Signature");
-TLZTandCfieldsMap3.put("field_type_name","Signature");
-//TLZ Terms and Conditions 3 - Lower Right
-TLZTandCfieldsMap4 = Map();
-TLZTandCfieldsMap4.put("x_coord","520");
-TLZTandCfieldsMap4.put("y_coord","770");
-TLZTandCfieldsMap4.put("abs_height","20");
-TLZTandCfieldsMap4.put("abs_width","20");
-TLZTandCfieldsMap4.put("field_type_id",sign_field_type_id);
-TLZTandCfieldsMap4.put("field_category","image");
-TLZTandCfieldsMap4.put("field_label","Signature");
-TLZTandCfieldsMap4.put("is_mandatory","true");
-TLZTandCfieldsMap4.put("page_no","3");
-TLZTandCfieldsMap4.put("document_id",doc_2);
-TLZTandCfieldsMap4.put("field_name","Signature");
-TLZTandCfieldsMap4.put("field_type_name","Signature");
-//TLZ Terms and Conditions 3 - Signature Label - Right Center
-TLZTandCfieldsMap5 = Map();
-TLZTandCfieldsMap5.put("x_coord","420");
-TLZTandCfieldsMap5.put("y_coord","510");
-TLZTandCfieldsMap5.put("abs_height","20");
-TLZTandCfieldsMap5.put("abs_width","20");
-TLZTandCfieldsMap5.put("field_type_id",sign_field_type_id);
-TLZTandCfieldsMap5.put("field_category","image");
-TLZTandCfieldsMap5.put("field_label","Signature");
-TLZTandCfieldsMap5.put("is_mandatory","true");
-TLZTandCfieldsMap5.put("page_no","3");
-TLZTandCfieldsMap5.put("document_id",doc_2);
-TLZTandCfieldsMap5.put("field_name","Signature");
-TLZTandCfieldsMap5.put("field_type_name","Signature");
-//TLZ Terms and Conditions 4
-TLZTandCfieldsMap6 = Map();
-TLZTandCfieldsMap6.put("x_coord","520");
-TLZTandCfieldsMap6.put("y_coord","770");
-TLZTandCfieldsMap6.put("abs_height","20");
-TLZTandCfieldsMap6.put("abs_width","20");
-TLZTandCfieldsMap6.put("field_type_id",sign_field_type_id);
-TLZTandCfieldsMap6.put("field_category","image");
-TLZTandCfieldsMap6.put("field_label","Signature");
-TLZTandCfieldsMap6.put("is_mandatory","true");
-TLZTandCfieldsMap6.put("page_no","4");
-TLZTandCfieldsMap6.put("document_id",doc_2);
-TLZTandCfieldsMap6.put("field_name","Signature");
-TLZTandCfieldsMap6.put("field_type_name","Signature");
-//TLZ Terms and Conditions 5 - Regular Trade License
-if(ifnull(application_details.get("License_Type").containsIgnoreCase("Regular"),""))
-{
-	TLZTandCfieldsMap6 = Map();
-	TLZTandCfieldsMap6.put("x_coord","200");
-	TLZTandCfieldsMap6.put("y_coord","270");
-	TLZTandCfieldsMap6.put("abs_height","20");
-	TLZTandCfieldsMap6.put("abs_width","20");
-	TLZTandCfieldsMap6.put("field_type_id",sign_field_type_id);
-	TLZTandCfieldsMap6.put("field_category","image");
-	TLZTandCfieldsMap6.put("field_label","Signature");
-	TLZTandCfieldsMap6.put("is_mandatory","true");
-	TLZTandCfieldsMap6.put("page_no","4");
-	TLZTandCfieldsMap6.put("document_id",doc_2);
-	TLZTandCfieldsMap6.put("field_name","Signature");
-	TLZTandCfieldsMap6.put("field_type_name","Signature");
-}
-//TLZ Terms and Conditions 5 - Free For Life Trade License  
-if(ifnull(application_details.get("License_Type").containsIgnoreCase("FFL"),""))
-{
-	TLZTandCfieldsMap7 = Map();
-	TLZTandCfieldsMap7.put("x_coord","500");
-	TLZTandCfieldsMap7.put("y_coord","270");
-	TLZTandCfieldsMap7.put("abs_height","20");
-	TLZTandCfieldsMap7.put("abs_width","20");
-	TLZTandCfieldsMap7.put("field_type_id",sign_field_type_id);
-	TLZTandCfieldsMap7.put("field_category","image");
-	TLZTandCfieldsMap7.put("field_label","Signature");
-	TLZTandCfieldsMap7.put("is_mandatory","true");
-	TLZTandCfieldsMap7.put("page_no","4");
-	TLZTandCfieldsMap7.put("document_id",doc_2);
-	TLZTandCfieldsMap7.put("field_name","Signature");
-	TLZTandCfieldsMap7.put("field_type_name","Signature");
-}
-//TLZ Terms and Conditions 6
-TLZTandCfieldsMap8 = Map();
-TLZTandCfieldsMap8.put("x_coord","520");
-TLZTandCfieldsMap8.put("y_coord","770");
-TLZTandCfieldsMap8.put("abs_height","20");
-TLZTandCfieldsMap8.put("abs_width","20");
-TLZTandCfieldsMap8.put("field_type_id",sign_field_type_id);
-TLZTandCfieldsMap8.put("field_category","image");
-TLZTandCfieldsMap8.put("field_label","Signature");
-TLZTandCfieldsMap8.put("is_mandatory","true");
-TLZTandCfieldsMap8.put("page_no","5");
-TLZTandCfieldsMap8.put("document_id",doc_2);
-TLZTandCfieldsMap8.put("field_name","Signature");
-TLZTandCfieldsMap8.put("field_type_name","Signature");
-//IFZA DXB plus Visa Licenses - Office Space Pricing 0
-IFZADXBVisaLicensesfieldsMap1 = Map();
-IFZADXBVisaLicensesfieldsMap1.put("x_coord","520");
-IFZADXBVisaLicensesfieldsMap1.put("y_coord","20");
-IFZADXBVisaLicensesfieldsMap1.put("abs_height","20");
-IFZADXBVisaLicensesfieldsMap1.put("abs_width","20");
-IFZADXBVisaLicensesfieldsMap1.put("field_type_id",sign_field_type_id);
-IFZADXBVisaLicensesfieldsMap1.put("field_category","image");
-IFZADXBVisaLicensesfieldsMap1.put("field_label","Signature");
-IFZADXBVisaLicensesfieldsMap1.put("is_mandatory","true");
-IFZADXBVisaLicensesfieldsMap1.put("page_no","0");
-IFZADXBVisaLicensesfieldsMap1.put("document_id",doc_3);
-IFZADXBVisaLicensesfieldsMap1.put("field_name","Signature");
-IFZADXBVisaLicensesfieldsMap1.put("field_type_name","Signature");
-//IFZA DXB Proprty Price List 0
-IFZADXBPropertyPriceListfieldsMap1 = Map();
-IFZADXBPropertyPriceListfieldsMap1.put("x_coord","520");
-IFZADXBPropertyPriceListfieldsMap1.put("y_coord","20");
-IFZADXBPropertyPriceListfieldsMap1.put("abs_height","20");
-IFZADXBPropertyPriceListfieldsMap1.put("abs_width","20");
-IFZADXBPropertyPriceListfieldsMap1.put("field_type_id",sign_field_type_id);
-IFZADXBPropertyPriceListfieldsMap1.put("field_category","image");
-IFZADXBPropertyPriceListfieldsMap1.put("field_label","Signature");
-IFZADXBPropertyPriceListfieldsMap1.put("is_mandatory","true");
-IFZADXBPropertyPriceListfieldsMap1.put("page_no","0");
-IFZADXBPropertyPriceListfieldsMap1.put("document_id",doc_4);
-IFZADXBPropertyPriceListfieldsMap1.put("field_name","Signature");
-IFZADXBPropertyPriceListfieldsMap1.put("field_type_name","Signature");
-// Createa list to store all the fields that need to be inserted
+documents = created_document_response.getjson("requests").getjson("document_ids");
+info "Document IDs: " + documents;
 fieldList = List();
-fieldList.add(IFZATandCfieldsMap1);
-fieldList.add(IFZATandCfieldsMap2);
-fieldList.add(IFZATandCfieldsMap3);
-fieldList.add(TLZTandCfieldsMap1);
-fieldList.add(TLZTandCfieldsMap2);
-fieldList.add(TLZTandCfieldsMap3);
-fieldList.add(TLZTandCfieldsMap4);
-fieldList.add(TLZTandCfieldsMap5);
-if(ifnull(application_details.get("License_Type").containsIgnoreCase("Regular"),""))
+for each  document in documents
 {
-	fieldList.add(TLZTandCfieldsMap6);
+	doc_name = document.get("document_name");
+	total_pages = document.get("total_pages");
+	doc_id = document.get("document_id");
+	if(doc_name.containsIgnoreCase("IFZA") && (doc_name.containsIgnoreCase("terms") || doc_name.containsIgnoreCase("T-C") || doc_name.containsIgnoreCase("T&C")))
+	{
+		if(total_pages > 0 || total_pages == 1)
+		{
+			//IFZA Terms and Conditions 0
+			IFZATandCfieldsMap1 = Map();
+			IFZATandCfieldsMap1.put("x_coord","30");
+			IFZATandCfieldsMap1.put("y_coord","770");
+			IFZATandCfieldsMap1.put("abs_height","20");
+			IFZATandCfieldsMap1.put("abs_width","20");
+			IFZATandCfieldsMap1.put("field_type_id",sign_field_type_id);
+			IFZATandCfieldsMap1.put("field_category","image");
+			IFZATandCfieldsMap1.put("field_label","Signature");
+			IFZATandCfieldsMap1.put("is_mandatory","true");
+			IFZATandCfieldsMap1.put("page_no","0");
+			IFZATandCfieldsMap1.put("document_id",doc_id);
+			IFZATandCfieldsMap1.put("field_name","Signature");
+			IFZATandCfieldsMap1.put("field_type_name","Signature");
+			fieldList.add(IFZATandCfieldsMap1);
+		}
+		if(total_pages > 1 || total_pages == 2)
+		{
+			//IFZA Terms and Conditions 1
+			IFZATandCfieldsMap2 = Map();
+			IFZATandCfieldsMap2.put("x_coord","20");
+			IFZATandCfieldsMap2.put("y_coord","770");
+			IFZATandCfieldsMap2.put("abs_height","20");
+			IFZATandCfieldsMap2.put("abs_width","20");
+			IFZATandCfieldsMap2.put("field_type_id",sign_field_type_id);
+			IFZATandCfieldsMap2.put("field_category","image");
+			IFZATandCfieldsMap2.put("field_label","Signature");
+			IFZATandCfieldsMap2.put("is_mandatory","true");
+			IFZATandCfieldsMap2.put("page_no","1");
+			IFZATandCfieldsMap2.put("document_id",doc_id);
+			IFZATandCfieldsMap2.put("field_name","Signature");
+			IFZATandCfieldsMap2.put("field_type_name","Signature");
+			fieldList.add(IFZATandCfieldsMap2);
+		}
+		if(total_pages > 2 || total_pages == 3)
+		{
+			//IFZA Terms and Conditions 2
+			IFZATandCfieldsMap3 = Map();
+			IFZATandCfieldsMap3.put("x_coord","20");
+			IFZATandCfieldsMap3.put("y_coord","770");
+			IFZATandCfieldsMap3.put("abs_height","20");
+			IFZATandCfieldsMap3.put("abs_width","20");
+			IFZATandCfieldsMap3.put("field_type_id",sign_field_type_id);
+			IFZATandCfieldsMap3.put("field_category","image");
+			IFZATandCfieldsMap3.put("field_label","Signature");
+			IFZATandCfieldsMap3.put("is_mandatory","true");
+			IFZATandCfieldsMap3.put("page_no","2");
+			IFZATandCfieldsMap3.put("document_id",doc_id);
+			IFZATandCfieldsMap3.put("field_name","Signature");
+			IFZATandCfieldsMap3.put("field_type_name","Signature");
+			fieldList.add(IFZATandCfieldsMap3);
+		}
+		if(total_pages > 3 || total_pages == 4)
+		{
+			//IFZA Terms and Conditions 3
+			IFZATandCfieldsMap4 = Map();
+			IFZATandCfieldsMap4.put("x_coord","20");
+			IFZATandCfieldsMap4.put("y_coord","770");
+			IFZATandCfieldsMap4.put("abs_height","20");
+			IFZATandCfieldsMap4.put("abs_width","20");
+			IFZATandCfieldsMap4.put("field_type_id",sign_field_type_id);
+			IFZATandCfieldsMap4.put("field_category","image");
+			IFZATandCfieldsMap4.put("field_label","Signature");
+			IFZATandCfieldsMap4.put("is_mandatory","true");
+			IFZATandCfieldsMap4.put("page_no","3");
+			IFZATandCfieldsMap4.put("document_id",doc_id);
+			IFZATandCfieldsMap4.put("field_name","Signature");
+			IFZATandCfieldsMap4.put("field_type_name","Signature");
+			fieldList.add(IFZATandCfieldsMap4);
+		}
+	}
+	if((doc_name.containsIgnoreCase("Trade License Zone") || doc_name.containsIgnoreCase("TLZ")) && (doc_name.containsIgnoreCase("terms") || doc_name.containsIgnoreCase("T-C") || doc_name.containsIgnoreCase("T&C")))
+	{
+		if(total_pages > 0 || total_pages == 1)
+		{
+			//TLZ Terms and Conditions 0
+			TLZTandCfieldsMap1 = Map();
+			TLZTandCfieldsMap1.put("x_coord","520");
+			TLZTandCfieldsMap1.put("y_coord","770");
+			TLZTandCfieldsMap1.put("abs_height","20");
+			TLZTandCfieldsMap1.put("abs_width","20");
+			TLZTandCfieldsMap1.put("field_type_id",sign_field_type_id);
+			TLZTandCfieldsMap1.put("field_category","image");
+			TLZTandCfieldsMap1.put("field_label","Signature");
+			TLZTandCfieldsMap1.put("is_mandatory","true");
+			TLZTandCfieldsMap1.put("page_no","0");
+			TLZTandCfieldsMap1.put("document_id",doc_id);
+			TLZTandCfieldsMap1.put("field_name","Signature");
+			TLZTandCfieldsMap1.put("field_type_name","Signature");
+			fieldList.add(TLZTandCfieldsMap1);
+		}
+		if(total_pages > 1 || total_pages == 2)
+		{
+			//TLZ Terms and Conditions 1
+			TLZTandCfieldsMap2 = Map();
+			TLZTandCfieldsMap2.put("x_coord","520");
+			TLZTandCfieldsMap2.put("y_coord","770");
+			TLZTandCfieldsMap2.put("abs_height","20");
+			TLZTandCfieldsMap2.put("abs_width","20");
+			TLZTandCfieldsMap2.put("field_type_id",sign_field_type_id);
+			TLZTandCfieldsMap2.put("field_category","image");
+			TLZTandCfieldsMap2.put("field_label","Signature");
+			TLZTandCfieldsMap2.put("is_mandatory","true");
+			TLZTandCfieldsMap2.put("page_no","1");
+			TLZTandCfieldsMap2.put("document_id",doc_id);
+			TLZTandCfieldsMap2.put("field_name","Signature");
+			TLZTandCfieldsMap2.put("field_type_name","Signature");
+			fieldList.add(TLZTandCfieldsMap2);
+		}
+		if(total_pages > 2 || total_pages == 3)
+		{
+			// //TLZ Terms and Conditions 2
+			TLZTandCfieldsMap3 = Map();
+			TLZTandCfieldsMap3.put("x_coord","520");
+			TLZTandCfieldsMap3.put("y_coord","770");
+			TLZTandCfieldsMap3.put("abs_height","20");
+			TLZTandCfieldsMap3.put("abs_width","20");
+			TLZTandCfieldsMap3.put("field_type_id",sign_field_type_id);
+			TLZTandCfieldsMap3.put("field_category","image");
+			TLZTandCfieldsMap3.put("field_label","Signature");
+			TLZTandCfieldsMap3.put("is_mandatory","true");
+			TLZTandCfieldsMap3.put("page_no","2");
+			TLZTandCfieldsMap3.put("document_id",doc_id);
+			TLZTandCfieldsMap3.put("field_name","Signature");
+			TLZTandCfieldsMap3.put("field_type_name","Signature");
+			fieldList.add(TLZTandCfieldsMap3);
+		}
+		if(total_pages > 3 || total_pages == 4)
+		{
+			//TLZ Terms and Conditions 3 - Lower Right
+			TLZTandCfieldsMap4 = Map();
+			TLZTandCfieldsMap4.put("x_coord","520");
+			TLZTandCfieldsMap4.put("y_coord","770");
+			TLZTandCfieldsMap4.put("abs_height","20");
+			TLZTandCfieldsMap4.put("abs_width","20");
+			TLZTandCfieldsMap4.put("field_type_id",sign_field_type_id);
+			TLZTandCfieldsMap4.put("field_category","image");
+			TLZTandCfieldsMap4.put("field_label","Signature");
+			TLZTandCfieldsMap4.put("is_mandatory","true");
+			TLZTandCfieldsMap4.put("page_no","3");
+			TLZTandCfieldsMap4.put("document_id",doc_id);
+			TLZTandCfieldsMap4.put("field_name","Signature");
+			TLZTandCfieldsMap4.put("field_type_name","Signature");
+			fieldList.add(TLZTandCfieldsMap4);
+			// //TLZ Terms and Conditions 3 - Signature Label - Right Center
+			TLZTandCfieldsMap5 = Map();
+			TLZTandCfieldsMap5.put("x_coord","420");
+			TLZTandCfieldsMap5.put("y_coord","510");
+			TLZTandCfieldsMap5.put("abs_height","20");
+			TLZTandCfieldsMap5.put("abs_width","20");
+			TLZTandCfieldsMap5.put("field_type_id",sign_field_type_id);
+			TLZTandCfieldsMap5.put("field_category","image");
+			TLZTandCfieldsMap5.put("field_label","Signature");
+			TLZTandCfieldsMap5.put("is_mandatory","true");
+			TLZTandCfieldsMap5.put("page_no","3");
+			TLZTandCfieldsMap5.put("document_id",doc_id);
+			TLZTandCfieldsMap5.put("field_name","Signature");
+			TLZTandCfieldsMap5.put("field_type_name","Signature");
+			fieldList.add(TLZTandCfieldsMap5);
+		}
+		if(total_pages > 4 || total_pages == 5)
+		{
+			// //TLZ Terms and Conditions 4
+			TLZTandCfieldsMap6 = Map();
+			TLZTandCfieldsMap6.put("x_coord","520");
+			TLZTandCfieldsMap6.put("y_coord","770");
+			TLZTandCfieldsMap6.put("abs_height","20");
+			TLZTandCfieldsMap6.put("abs_width","20");
+			TLZTandCfieldsMap6.put("field_type_id",sign_field_type_id);
+			TLZTandCfieldsMap6.put("field_category","image");
+			TLZTandCfieldsMap6.put("field_label","Signature");
+			TLZTandCfieldsMap6.put("is_mandatory","true");
+			TLZTandCfieldsMap6.put("page_no","4");
+			TLZTandCfieldsMap6.put("document_id",doc_id);
+			TLZTandCfieldsMap6.put("field_name","Signature");
+			TLZTandCfieldsMap6.put("field_type_name","Signature");
+			fieldList.add(TLZTandCfieldsMap6);
+			if(license_type.containsIgnoreCase("Regular"))
+			{
+				TLZTandCfieldsMap7 = Map();
+				TLZTandCfieldsMap7.put("x_coord","200");
+				TLZTandCfieldsMap7.put("y_coord","270");
+				TLZTandCfieldsMap7.put("abs_height","20");
+				TLZTandCfieldsMap7.put("abs_width","20");
+				TLZTandCfieldsMap7.put("field_type_id",sign_field_type_id);
+				TLZTandCfieldsMap7.put("field_category","image");
+				TLZTandCfieldsMap7.put("field_label","Signature");
+				TLZTandCfieldsMap7.put("is_mandatory","true");
+				TLZTandCfieldsMap7.put("page_no","4");
+				TLZTandCfieldsMap7.put("document_id",doc_id);
+				TLZTandCfieldsMap7.put("field_name","Signature");
+				TLZTandCfieldsMap7.put("field_type_name","Signature");
+				fieldList.add(TLZTandCfieldsMap7);
+			}
+			//TLZ Terms and Conditions 5 - Free For Life Trade License  
+			if(license_type.containsIgnoreCase("FFL"))
+			{
+				TLZTandCfieldsMap8 = Map();
+				TLZTandCfieldsMap8.put("x_coord","500");
+				TLZTandCfieldsMap8.put("y_coord","270");
+				TLZTandCfieldsMap8.put("abs_height","20");
+				TLZTandCfieldsMap8.put("abs_width","20");
+				TLZTandCfieldsMap8.put("field_type_id",sign_field_type_id);
+				TLZTandCfieldsMap8.put("field_category","image");
+				TLZTandCfieldsMap8.put("field_label","Signature");
+				TLZTandCfieldsMap8.put("is_mandatory","true");
+				TLZTandCfieldsMap8.put("page_no","4");
+				TLZTandCfieldsMap8.put("document_id",doc_id);
+				TLZTandCfieldsMap8.put("field_name","Signature");
+				TLZTandCfieldsMap8.put("field_type_name","Signature");
+				fieldList.add(TLZTandCfieldsMap8);
+			}
+		}
+		if(total_pages > 5 || total_pages == 6)
+		{
+			//TLZ Terms and Conditions 6
+			TLZTandCfieldsMap9 = Map();
+			TLZTandCfieldsMap9.put("x_coord","520");
+			TLZTandCfieldsMap9.put("y_coord","770");
+			TLZTandCfieldsMap9.put("abs_height","20");
+			TLZTandCfieldsMap9.put("abs_width","20");
+			TLZTandCfieldsMap9.put("field_type_id",sign_field_type_id);
+			TLZTandCfieldsMap9.put("field_category","image");
+			TLZTandCfieldsMap9.put("field_label","Signature");
+			TLZTandCfieldsMap9.put("is_mandatory","true");
+			TLZTandCfieldsMap9.put("page_no","5");
+			TLZTandCfieldsMap9.put("document_id",doc_id);
+			TLZTandCfieldsMap9.put("field_name","Signature");
+			TLZTandCfieldsMap9.put("field_type_name","Signature");
+			fieldList.add(TLZTandCfieldsMap9);
+		}
+	}
+	if((doc_name.containsIgnoreCase("IFZA") || doc_name.containsIgnoreCase("ifza")) && (doc_name.containsIgnoreCase("Office Pricing") || doc_name.containsIgnoreCase("Visa Licenses") || doc_name.containsIgnoreCase("plus")))
+	{
+		if(total_pages > 0 || total_pages == 1)
+		{
+			// //IFZA DXB plus Visa Licenses - Office Space Pricing 0
+			IFZADXBVisaLicensesfieldsMap1 = Map();
+			IFZADXBVisaLicensesfieldsMap1.put("x_coord","520");
+			IFZADXBVisaLicensesfieldsMap1.put("y_coord","20");
+			IFZADXBVisaLicensesfieldsMap1.put("abs_height","20");
+			IFZADXBVisaLicensesfieldsMap1.put("abs_width","20");
+			IFZADXBVisaLicensesfieldsMap1.put("field_type_id",sign_field_type_id);
+			IFZADXBVisaLicensesfieldsMap1.put("field_category","image");
+			IFZADXBVisaLicensesfieldsMap1.put("field_label","Signature");
+			IFZADXBVisaLicensesfieldsMap1.put("is_mandatory","true");
+			IFZADXBVisaLicensesfieldsMap1.put("page_no","0");
+			IFZADXBVisaLicensesfieldsMap1.put("document_id",doc_id);
+			IFZADXBVisaLicensesfieldsMap1.put("field_name","Signature");
+			IFZADXBVisaLicensesfieldsMap1.put("field_type_name","Signature");
+			fieldList.add(IFZADXBVisaLicensesfieldsMap1);
+		}
+		if(total_pages > 1 || total_pages == 2)
+		{
+			// //IFZA DXB plus Visa Licenses - Office Space Pricing 0
+			IFZADXBVisaLicensesfieldsMap2 = Map();
+			IFZADXBVisaLicensesfieldsMap2.put("x_coord","520");
+			IFZADXBVisaLicensesfieldsMap2.put("y_coord","20");
+			IFZADXBVisaLicensesfieldsMap2.put("abs_height","20");
+			IFZADXBVisaLicensesfieldsMap2.put("abs_width","20");
+			IFZADXBVisaLicensesfieldsMap2.put("field_type_id",sign_field_type_id);
+			IFZADXBVisaLicensesfieldsMap2.put("field_category","image");
+			IFZADXBVisaLicensesfieldsMap2.put("field_label","Signature");
+			IFZADXBVisaLicensesfieldsMap2.put("is_mandatory","true");
+			IFZADXBVisaLicensesfieldsMap2.put("page_no","1");
+			IFZADXBVisaLicensesfieldsMap2.put("document_id",doc_id);
+			IFZADXBVisaLicensesfieldsMap2.put("field_name","Signature");
+			IFZADXBVisaLicensesfieldsMap2.put("field_type_name","Signature");
+			fieldList.add(IFZADXBVisaLicensesfieldsMap2);
+		}
+	}
+	if((doc_name.containsIgnoreCase("IFZA") || doc_name.containsIgnoreCase("ifza")) && (doc_name.containsIgnoreCase("Property Price List") || doc_name.containsIgnoreCase("Property") || doc_name.containsIgnoreCase("Price List")))
+	{
+		if(total_pages > 0 || total_pages == 1)
+		{
+			//IFZA DXB Proprty Price List 0
+			IFZADXBPropertyPriceListfieldsMap1 = Map();
+			IFZADXBPropertyPriceListfieldsMap1.put("x_coord","520");
+			IFZADXBPropertyPriceListfieldsMap1.put("y_coord","20");
+			IFZADXBPropertyPriceListfieldsMap1.put("abs_height","20");
+			IFZADXBPropertyPriceListfieldsMap1.put("abs_width","20");
+			IFZADXBPropertyPriceListfieldsMap1.put("field_type_id",sign_field_type_id);
+			IFZADXBPropertyPriceListfieldsMap1.put("field_category","image");
+			IFZADXBPropertyPriceListfieldsMap1.put("field_label","Signature");
+			IFZADXBPropertyPriceListfieldsMap1.put("is_mandatory","true");
+			IFZADXBPropertyPriceListfieldsMap1.put("page_no","0");
+			IFZADXBPropertyPriceListfieldsMap1.put("document_id",doc_id);
+			IFZADXBPropertyPriceListfieldsMap1.put("field_name","Signature");
+			IFZADXBPropertyPriceListfieldsMap1.put("field_type_name","Signature");
+			fieldList.add(IFZADXBPropertyPriceListfieldsMap1);
+		}
+		if(total_pages > 1 || total_pages == 2)
+		{
+			//IFZA DXB Proprty Price List 0
+			IFZADXBPropertyPriceListfieldsMap2 = Map();
+			IFZADXBPropertyPriceListfieldsMap2.put("x_coord","520");
+			IFZADXBPropertyPriceListfieldsMap2.put("y_coord","20");
+			IFZADXBPropertyPriceListfieldsMap2.put("abs_height","20");
+			IFZADXBPropertyPriceListfieldsMap2.put("abs_width","20");
+			IFZADXBPropertyPriceListfieldsMap2.put("field_type_id",sign_field_type_id);
+			IFZADXBPropertyPriceListfieldsMap2.put("field_category","image");
+			IFZADXBPropertyPriceListfieldsMap2.put("field_label","Signature");
+			IFZADXBPropertyPriceListfieldsMap2.put("is_mandatory","true");
+			IFZADXBPropertyPriceListfieldsMap2.put("page_no","1");
+			IFZADXBPropertyPriceListfieldsMap2.put("document_id",doc_id);
+			IFZADXBPropertyPriceListfieldsMap2.put("field_name","Signature");
+			IFZADXBPropertyPriceListfieldsMap2.put("field_type_name","Signature");
+			fieldList.add(IFZADXBPropertyPriceListfieldsMap2);
+		}
+	}
 }
-if(ifnull(application_details.get("License_Type").containsIgnoreCase("FFL"),""))
-{
-	fieldList.add(TLZTandCfieldsMap7);
-}
-fieldList.add(TLZTandCfieldsMap8);
-fieldList.add(IFZADXBVisaLicensesfieldsMap1);
-fieldList.add(IFZADXBPropertyPriceListfieldsMap1);
-// Create a map to store the details of the first recipient
 actionMap = Map();
 actionMap.put("fields",fieldList);
 actionMap.put("recipient_name","Rey");
@@ -275,7 +369,7 @@ actionList = List();
 actionList.add(actionMap);
 //Create a map to store the request details 
 requestMap = Map();
-requestMap.put("request_name","Test Document");
+requestMap.put("request_name","Applications Form -" + account_name);
 requestMap.put("actions",actionList);
 // Store the request details as a value to the key - data 
 dataMap = Map();
