@@ -158,11 +158,14 @@ for each  contact_subform_Primary_Account in contact_subform_Primary_Accounts
 	contactmap = Map();
 	contactmap.put("Subform_Status"," ");
 	contactmap.put("Subform_Status_trigger"," ");
-	if(ifnull(contact_subform_Primary_Account.get("Account_Name").get("name"),"") == main_account_name)
-	{
-		contactmap.put("Email",email_add);
-		contactmap.put("Mobile",contact_number);
-	}
+	// 	if(ifnull(contact_subform_Primary_Account.get("Account_Name").get("name"),"") == main_account_name)
+	// 	{
+	// 		// 		if((ifnull(contact_details.get("Email"),"") != " " || ifnull(contact_details.get("Email"),"") != null) && (ifnull(contact_details.get("Mobile"),"") != " " || ifnull(contact_details.get("Mobile"),"") != null))
+	// 		// 		{
+	// 		contactmap.put("Email",email_add);
+	// 		contactmap.put("Mobile",contact_number);
+	// 		// 		}
+	// 	}
 	// main is updated
 	// 	if(ifnull(contact_subform_Primary_Account.get("Hierarchy"),"") == "Main")
 	// 	{
