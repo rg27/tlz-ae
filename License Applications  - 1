@@ -41,13 +41,52 @@ share_value = ifnull(app_Details.get("Share_Value")," ");
 company_member_gm = ifnull(app_Details.get("Company_Member_GM")," ");
 ubo_type = ifnull(app_Details.get("UBO_Type"),"");
 embed_1 = ifnull(app_Details.get("Embed_1")," ");
+//Start Terms and Conditions
+t_and_c_files = ifnull(app_Details.get("Terms_and_Conditions")," ");
+ifza_t_and_c = 0;
+tlz_t_and_c = 0;
+ifza_office_pricing = 0;
+ifza_property_pricelist = 0;
+for each  t_and_c_file in t_and_c_files
+{
+	doc_name = t_and_c_file.getjson("file_Name");
+	if(doc_name.containsIgnoreCase("IFZA") && (doc_name.containsIgnoreCase("terms") || doc_name.containsIgnoreCase("T-C") || doc_name.containsIgnoreCase("T&C")))
+	{
+		ifza_t_and_c = 1;
+		info ifza_t_and_c;
+	}
+	if((doc_name.containsIgnoreCase("Trade License Zone") || doc_name.containsIgnoreCase("TLZ")) && (doc_name.containsIgnoreCase("terms") || doc_name.containsIgnoreCase("T-C") || doc_name.containsIgnoreCase("T&C")))
+	{
+		tlz_t_and_c = 1;
+		info tlz_t_and_c;
+	}
+	if((doc_name.containsIgnoreCase("IFZA") || doc_name.containsIgnoreCase("ifza")) && (doc_name.containsIgnoreCase("Office Pricing") || doc_name.containsIgnoreCase("Visa Licenses") || doc_name.containsIgnoreCase("plus")))
+	{
+		ifza_office_pricing = 1;
+		info ifza_office_pricing;
+	}
+	if((doc_name.containsIgnoreCase("IFZA") || doc_name.containsIgnoreCase("ifza")) && (doc_name.containsIgnoreCase("Property Price List") || doc_name.containsIgnoreCase("Property") || doc_name.containsIgnoreCase("Price List")))
+	{
+		ifza_property_pricelist = 1;
+		info ifza_property_pricelist;
+	}
+}
+//End of Terms and Conditions
 info "Company Member GM: " + company_member_gm;
 iterator_counter = 0;
 passport_empty_iterator = 0;
 passport_file_status = true;
 general_manager_counter = 0;
+cm_valid_counter = 0;
 for each  license_app in license_app_details
 {
+	//Company Members Validator
+	vm_validator = ifnull(license_app.get("CM_Valid"),"");
+	if(vm_validator == true)
+	{
+		cm_valid_counter = cm_valid_counter + 1;
+	}
+	
 	//Validate the passport files if it's empty
 	passport_file = ifnull(license_app.get("Passport_file"),"");
 	if(passport_file == "" || passport_file == null)
@@ -57,6 +96,7 @@ for each  license_app in license_app_details
 	}
 	else
 	{
+		
 		iterator_counter = iterator_counter + 1;
 		company_email = ifnull(license_app.get("Email"),"");
 		company_fname = ifnull(license_app.get("First_Name")," ");
@@ -430,7 +470,7 @@ if(iterator_counter > 6 || iterator_counter == 7)
 	passport_url_7 = ifnull(company_member_list_2.get(6).get("Passport_Image_URL"),"");
 	company_member_name_7 = ifnull(company_member_list_2.get(6).get("Name"),"");
 }
-if((passport_file_status != false || passport_file_status == true) && general_manager_counter == 1)
+if((passport_file_status != false || passport_file_status == true) && general_manager_counter == 1 && cm_valid_counter == iterator_counter && t_and_c_files != "" && ifza_t_and_c == 1 && tlz_t_and_c == 1 && ifza_office_pricing == 1 && ifza_property_pricelist == 1)
 {
 	InsideParam2 = Map();
 	InsideParam2.put("general_manager",company_member_gm);
@@ -925,6 +965,30 @@ else
 	if(general_manager_counter != 1)
 	{
 		return "Number of General Manager: " + general_manager_counter;
+	}
+	if(cm_valid_counter != iterator_counter)
+	{
+		return "Some Company Members are not valid or completed";
+	}
+	if(t_and_c_files == "")
+	{
+		return "T and C and other files field is empty!";
+	}
+	if(ifza_t_and_c == 0)
+	{
+		return "IFZA Terms and Conditions file was not added.";
+	}
+	if(tlz_t_and_c == 0)
+	{
+		return "TLZ Terms and Conditions file was not added.";
+	}
+	if(ifza_office_pricing == 0)
+	{
+		return "IFZA Office Pricing file was not added.";
+	}
+	if(ifza_property_pricelist == 0)
+	{
+		return "IFZA Property List file was not added.";
 	}
 	return "";
 }
