@@ -3,6 +3,7 @@ app_Details = zoho.crm.getRecordById("Applications1",application_id);
 license_app_details = zoho.crm.getRelatedRecords("Applications_Company_Members","Applications1",application_id);
 company_member_list = List();
 company_member_list_2 = List();
+account_name = ifnull(app_Details.get("Account_Name").get("name"),"");
 new_license_app_type = ifnull(app_Details.get("New_License_Application_Type")," ");
 branch_company_name = ifnull(app_Details.get("Branch_Company_Name")," ");
 parent_company_country = ifnull(app_Details.get("Parent_Company_Country")," ");
@@ -38,12 +39,15 @@ total_share_capital = ifnull(app_Details.get("Total_Share_Capital")," ");
 number_of_share = ifnull(app_Details.get("Number_of_Shares")," ");
 share_value = ifnull(app_Details.get("Share_Value")," ");
 company_member_gm = ifnull(app_Details.get("Company_Member_GM")," ");
+ubo_type = ifnull(app_Details.get("UBO_Type"),"");
 embed_1 = ifnull(app_Details.get("Embed_1")," ");
+t_and_c = ifnull(app_Details.get("Terms_and_Conditions")," ");
 info "Company Member GM: " + company_member_gm;
 iterator_counter = 0;
 passport_empty_iterator = 0;
 passport_file_status = true;
 general_manager_counter = 0;
+cm_valid_counter = 0;
 for each  license_app in license_app_details
 {
 	//Validate the passport files if it's empty
@@ -55,6 +59,7 @@ for each  license_app in license_app_details
 	}
 	else
 	{
+		cm_valid_counter = cm_valid_counter + 1;
 		iterator_counter = iterator_counter + 1;
 		company_email = ifnull(license_app.get("Email"),"");
 		company_fname = ifnull(license_app.get("First_Name")," ");
@@ -428,7 +433,7 @@ if(iterator_counter > 6 || iterator_counter == 7)
 	passport_url_7 = ifnull(company_member_list_2.get(6).get("Passport_Image_URL"),"");
 	company_member_name_7 = ifnull(company_member_list_2.get(6).get("Name"),"");
 }
-if((passport_file_status != false || passport_file_status == true) && general_manager_counter == 1)
+if((passport_file_status != false || passport_file_status == true) && general_manager_counter == 1 && cm_valid_counter == iterator_counter && t_and_c != "")
 {
 	InsideParam2 = Map();
 	InsideParam2.put("general_manager",company_member_gm);
@@ -707,6 +712,7 @@ if((passport_file_status != false || passport_file_status == true) && general_ma
 	InsideParam2.put("passport_url_7",passport_url_7);
 	InsideParam2.put("company_member_name_7",company_member_name_7);
 	InsideParam2.put("embed_1",embed_1);
+	InsideParam2.put("ubo",ubo_type);
 	company_member_list.add(InsideParam2);
 	outsideParam = Map();
 	outsideParam.put("doc_name","License Application Form");
@@ -887,7 +893,7 @@ if((passport_file_status != false || passport_file_status == true) && general_ma
 	inputMap = Map();
 	//
 	sub = "License Application Form";
-	inputMap.put("subject",sub);
+	inputMap.put("subject",sub + " - " + account_name + "[1/2]");
 	// inputMap.put("reminder_period","1");
 	//optional
 	// inputMap.put("is_sequential",true);
@@ -923,4 +929,13 @@ else
 	{
 		info "Number of General Manager: " + general_manager_counter;
 	}
+	if(cm_valid_counter != iterator_counter)
+	{
+		info "Some Company Members";
+	}
+	if(t_and_c == "")
+	{
+		info "T and C and other files field is empty!";
+	}
+	info "";
 }
