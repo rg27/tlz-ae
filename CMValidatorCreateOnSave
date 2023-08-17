@@ -1,0 +1,28 @@
+var app_name = ZDK.Page.getField('Application_Name');
+var app_name_value = app_name.getValue();
+
+
+var emirates_number = ZDK.Page.getField('Emirates_ID_Number');
+var emirates_number_value = emirates_number.getValue();
+log("Number of Share: " + number_of_share_value)
+
+
+//Emirates ID Validation
+if (emirates_number_value != null  || emirates_number_value != undefined)
+{
+    if (validates_emirates_id(emirates_number_value))
+    {
+    }
+    else
+    {
+        emirates_number.showError('Please follow this format: 123-1234-1234567-1');
+        return false;
+    }
+}
+
+//Application Name Validation
+if (app_name_value == null || app_name_value == undefined || app_name_value == "")
+{
+    app_name.showError('Application No. is empty!');
+    return false;
+}
