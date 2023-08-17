@@ -1,0 +1,59 @@
+//Set Passport File to Mandatory 
+// var pass_file = ZDK.Page.getField("Passport_file");
+// pass_file.setMandatory(true);
+
+//Set Number of Share File to Mandatory
+var number_of_share = ZDK.Page.getField('Number_of_Shares');
+number_of_share.setMandatory(true);
+
+//Set Application_No to Mandatory
+var app_name = ZDK.Page.getField('Application_No');
+app_name.setMandatory(true);
+
+var app_name = ZDK.Page.getField('Application_No').getValue();
+if (app_name != null || app_name != "" || app_name != undefined)
+{
+    //The Application_No is a lookup field, so it returned an object that needs a stringify conversion to read the returned value
+    var json_app_name_stringify = JSON.stringify(app_name);
+    //Convert again to Parse to return an object
+    var json_app_name_parse = JSON.parse(json_app_name_stringify);
+    //Get the value of name from the Application_No object(JSON.parse)
+    var final_app_name = json_app_name_parse.name;
+    log("Final Name : " + final_app_name);
+
+    //the app name must not blank/undefined/null(Javascript validation)
+    if (final_app_name != "" || final_app_name != undefined || final_app_name != null)
+    {
+        //Search the Application_No in Applications module
+        var app_details = ZDK.Apps.CRM.Applications1.searchByCriteria("((Name:equals:" + final_app_name + "))");
+        log("App Details Result: " + app_details)
+        //Convert the return subject of the search function to Json stringify
+        var applications_details_result = JSON.stringify(app_details[0]);
+        log("JSON Applications Details Result: " + applications_details_result);
+        //Convert the String data to JSON
+        var json_applications_details_result = JSON.parse(applications_details_result);
+        //Get the lookup ID
+        account_lookup_id = json_applications_details_result._Account_Name_Lookup_Id;
+        //Get the Account Details to get the Account Name
+        var account_details = ZDK.Apps.CRM.Accounts.fetchById(account_lookup_id);
+        var account_details_string = JSON.stringify(account_details);
+        var json_accounts_details_result = JSON.parse(account_details_string);
+
+        
+
+        //The returned data from JSON should not be empty/null/undefined
+        if (applications_details_result != undefined || applications_details_result != null || applications_details_result != "")
+        {
+            //Set the Account Name
+             var name_of_account = json_accounts_details_result._Account_Name;
+            //To Update the Account Name(Lookup field), must use an object type
+            account_data = { id: account_lookup_id, name: name_of_account }
+            number_of_share = json_applications_details_result._Number_of_Shares;
+            ZDK.Page.getField('Account').setValue(account_data);
+        }
+        else
+        {
+            ZDK.Page.getField('Account').setValue("");
+        }
+    }
+}
