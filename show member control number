@@ -1,0 +1,2 @@
+var mrn = ZDK.Page.getField('Member_Record_Number');
+mrn.setVisibility(true);
