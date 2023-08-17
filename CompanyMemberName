@@ -1,0 +1,5 @@
+var fname = ZDK.Page.getField('First_Name').getValue();
+var lname = ZDK.Page.getField('Last_Name').getValue();
+var fullname = fname + " " +lname;
+var company_member_name = ZDK.Page.getField('Name').setValue(fullname);
+log("Company Name: " + company_member_name)
